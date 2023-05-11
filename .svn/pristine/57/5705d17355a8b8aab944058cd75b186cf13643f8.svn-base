@@ -1,0 +1,75 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CodeTypesController : ControllerBase
+    {
+        private readonly ICodeTypesRepository _CodeTypesRepository;
+        public CodeTypesController(ICodeTypesRepository CodeTypesRepository)
+        {
+            _CodeTypesRepository = CodeTypesRepository;
+        }
+        /// <summary>
+        /// Get Code Type.
+        /// UI Reffered - CodeType, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetCodeTypes()
+        {
+            var ct = _CodeTypesRepository.GetCodeTypes();
+           return Ok(ct);
+        }
+
+        /// <summary>
+        /// Insert into Code Type Table
+        /// UI Reffered - CodeType,
+        /// </summary>
+        [HttpPost]
+        public IActionResult InsertIntoCodeType(DO_CodeTypes obj)
+        {
+            var msg = _CodeTypesRepository.InsertIntoCodeType(obj);
+            return Ok(msg);
+        }
+
+        /// <summary>
+        /// Update into Code Type Table
+        /// UI Reffered - CodeType,
+        /// </summary>
+        [HttpPost]
+        public IActionResult UpdateCodeType(DO_CodeTypes obj)
+        {
+            var msg = _CodeTypesRepository.UpdateCodeType(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Get Code Type List.
+        /// UI Reffered - Code Types dropdwon in Application Codes, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetActiveCodeTypes()
+        {
+            var act = _CodeTypesRepository.GetActiveCodeTypes();
+           return Ok(act);
+        }
+
+        /// <summary>
+        /// Get User Defined Code Type List.
+        /// UI Reffered - CodeType, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetUserDefinedCodeTypesList()
+        {
+            var uct = _CodeTypesRepository.GetUserDefinedCodeTypesList();
+           return Ok(uct);
+        }
+    }
+}

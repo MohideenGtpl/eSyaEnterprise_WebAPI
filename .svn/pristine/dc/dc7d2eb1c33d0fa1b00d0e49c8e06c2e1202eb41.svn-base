@@ -1,0 +1,14 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IUnitofMeasureRepository
+    {
+        List<DO_UnitofMeasure> GetUnitofMeasurements();
+
+        DO_ReturnParameter InsertOrUpdateUnitofMeasurement(DO_UnitofMeasure uoms);
+    }
+}

@@ -1,0 +1,60 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+    public interface IBusinessStructureRepository
+    {
+        #region Business Entity
+
+         List<DO_BusinessEntity> GetBusinessEntities();
+
+         DO_ReturnParameter InsertBusinessEntity(DO_BusinessEntity businessentity);
+
+         DO_ReturnParameter UpdateBusinessEntity(DO_BusinessEntity businessentity);
+
+        List<DO_BusinessEntity> GetActiveBusinessEntities();
+
+        #endregion  Business Entity
+
+        #region  Business Segment
+
+        List<DO_BusinessSegment> GetBusinessSegmentByBusinessId(int BusinessId);
+
+        DO_ReturnParameter InsertBusinessSegment(DO_BusinessSegment BusinessSegment);
+
+        DO_ReturnParameter UpdateBusinessSegment(DO_BusinessSegment BusinessSegment);
+
+        List<DO_BusinessSegment> GetActiveBusinessSegmentbyBusinessId(int BusinessId);
+
+        #endregion Business Segment
+
+        #region Business Location
+
+        List<DO_BusinessLocation> GetBusinessLocationByBusinessIdandSegmentId(int BusinessId, int SegmentId);
+
+        DO_ReturnParameter InsertBusinessLocation(DO_BusinessLocation location);
+
+        DO_ReturnParameter UpdateBusinessLocation(DO_BusinessLocation location);
+
+        #endregion Business Location
+
+        #region Business Stores
+
+        DO_ReturnParameter InsertOrUpdateBusinessStores(DO_BusinessStores store);
+
+        List<DO_BusinessStores> GetBusinessStores(int Businesskey);
+
+        #endregion Business Stores
+
+        #region Business Statutory Details
+
+        DO_ReturnParameter InsertOrUpdateBusinessStatutoryDetails(DO_BusinessStatutoryDetails statutorydetails);
+
+        List<DO_BusinessStatutoryDetails> GetBusinessStatutoryDetails(int BusinessKey);
+
+        #endregion Business Statutory Details
+    }
+}

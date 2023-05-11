@@ -1,0 +1,31 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ICountryRepository
+    {
+        #region Country Codes
+        List<DO_CountryCodes> GetAllCountryCodes();
+
+        DO_ReturnParameter InsertIntoCountryCode(DO_CountryCodes countrycode);
+
+        DO_ReturnParameter UpdateCountryCode(DO_CountryCodes countrycode);
+        DO_CountryCodes GetCurrencyNamebyIsdCode(int IsdCode);
+        #endregion Country Codes
+
+        #region Statutory Details
+        List<DO_CountryStatutoryDetails> GetStatutoryCodesbyIsdcode(int Isdcode);
+
+        DO_ReturnParameter InsertOrUpdateStatutoryCodes(DO_CountryStatutoryDetails statutorycodes);
+
+        List<DO_CountryStatutoryDetails> GetActiveStatutoryCodes();
+        #endregion Statutory Details
+
+        #region Tax Identification
+        List<DO_TaxIdentification> GetActiveTaxIdentification();
+        #endregion Identification
+    }
+}

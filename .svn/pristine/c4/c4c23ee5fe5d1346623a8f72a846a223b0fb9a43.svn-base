@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repository\BusinessStructureRepository.cs" />
+    <Compile Remove="Repository\CountryRepository.cs" />
+    <Compile Remove="Repository\CurrencyMasterRepository.cs" />
+    <Compile Remove="Repository\DocumentControlRepository.cs" />
+    <Compile Remove="Repository\InventoryRulesRepository.cs" />
+    <Compile Remove="Repository\LocalizationMasterRepository.cs" />
+    <Compile Remove="Repository\ProcessMasterRepository.cs" />
+    <Compile Remove="Repository\ReportHeaderRepository.cs" />
+    <Compile Remove="Repository\StoreMasterRepository.cs" />
+    <Compile Remove="Repository\TaxRuleRepository.cs" />
+    <Compile Remove="Repository\TaxStructureRepository.cs" />
+    <Compile Remove="Repository\UnitofMeasureRepository.cs" />
+    <Compile Remove="Repository\UserManagementRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eSyaConfigSetup.DO\eSyaConfigSetup.DO.csproj" />
+    <ProjectReference Include="..\eSyaConfigSetup.IF\eSyaConfigSetup.IF.csproj" />
+  </ItemGroup>
+
+</Project>

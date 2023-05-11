@@ -1,0 +1,110 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class eSyaConfigureMenuController : ControllerBase
+    {
+        private readonly IConfigureMenuRepository _ConfigureMenuRepository;
+
+        public eSyaConfigureMenuController(IConfigureMenuRepository ConfigureMenuRepository)
+        {
+            _ConfigureMenuRepository = ConfigureMenuRepository;
+        }
+        public IActionResult GetMainMenuById(int mainMenuId)
+        {
+            var main_menus = _ConfigureMenuRepository.GetMainMenuById(mainMenuId);
+            return Ok(main_menus);
+        }
+
+
+        public IActionResult InsertIntoMainMenu(DO_MainMenu obj)
+        {
+            var msg = _ConfigureMenuRepository.InsertIntoMainMenu(obj);
+            return Ok(msg);
+        }
+
+        public IActionResult UpdateMainMenuIndex(int mainMenuId, bool isMoveUp, bool isMoveDown)
+        {
+            var msg = _ConfigureMenuRepository.UpdateMainMenuIndex(mainMenuId, isMoveUp, isMoveDown);
+            return Ok(msg);
+        }
+
+        public IActionResult DeleteMainMenuByID(int mainMenuId)
+        {
+            var msg = _ConfigureMenuRepository.DeleteMainMenu(mainMenuId);
+            return Ok(msg);
+        }
+
+
+        public IActionResult GetSubMenuById(int menuItemId)
+        {
+            var sub_menus = _ConfigureMenuRepository.GetSubMenuById(menuItemId);
+            return Ok(sub_menus);
+        }
+
+        public IActionResult InsertIntoSubMenu(DO_SubMenu obj)
+        {
+            var msg = _ConfigureMenuRepository.InsertIntoSubMenu(obj);
+            return Ok(msg);
+        }
+
+        public IActionResult UpdateSubMenusIndex(int menuItemId, bool isMoveUp, bool isMoveDown)
+        {
+            var msg = _ConfigureMenuRepository.UpdateSubMenusIndex(menuItemId, isMoveUp, isMoveDown);
+            return Ok(msg);
+        }
+
+        public IActionResult DeleteSubMenuByID(int menuItemId)
+        {
+            var msg = _ConfigureMenuRepository.DeleteSubMenu(menuItemId);
+            return Ok(msg);
+        }
+
+
+        public IActionResult GetFormDetailById(int mainMenuId, int menuItemId, int formId)
+        {
+            var form_details = _ConfigureMenuRepository.GetFormDetailById(mainMenuId, menuItemId, formId);
+            return Ok(form_details);
+        }
+        public IActionResult InsertIntoFormMenu(DO_FormMenu obj)
+        {
+            var msg = _ConfigureMenuRepository.InsertIntoFormMenu(obj);
+            return Ok(msg);
+        }
+
+        public IActionResult UpdateFormsIndex(int mainMenuId, int menuItemId, int formId, bool isMoveUp, bool isMoveDown)
+        {
+            var msg = _ConfigureMenuRepository.UpdateFormsIndex(mainMenuId, menuItemId, formId, isMoveUp, isMoveDown);
+            return Ok(msg);
+        }
+
+        public IActionResult DeleteFormMenuByID(int mainMenuId, int menuItemId, int formId)
+        {
+            var msg = _ConfigureMenuRepository.DeleteFormMenu(mainMenuId, menuItemId, formId);
+            return Ok(msg);
+        }
+       
+
+        public IActionResult GetConfigureMenuMaster()
+        { var config_menus = _ConfigureMenuRepository.GetConfigureMenuMaster();
+            return Ok(config_menus);
+        }
+
+        public IActionResult GetConfigureMenulist()
+        { var config_Menu = _ConfigureMenuRepository.GetConfigureMenulist();
+            return Ok(config_Menu);
+        }
+
+        //public IActionResult GetFormDetailByID(int mainMenuId, int menuItemId, int formId)
+        //{
+        //    return Ok(new DL_ConfigureMenu().GetFormDetailById(mainMenuId, menuItemId, formId));
+        //}
+
+
+    }
+}

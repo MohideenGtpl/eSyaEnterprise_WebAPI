@@ -1,0 +1,115 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+  public class UserManagementRepository:IUserManagementRepository
+    {
+        #region User Group
+        public List<int> GetMenuKeysbyUserGroupAndUserType(int uG, int uT)
+        {
+            try
+            {
+                List<int> menukeys = new List<int>();
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    IEnumerable<GtEuusgr> Usergroups = db.GtEuusgr.Where(u=>u.UserGroup==uG && u.UserType== uT && u.ActiveStatus == true);
+                    int key;
+                    foreach (GtEuusgr obj in Usergroups)
+                    {
+                        key = new int();
+                        key = obj.MenuKey;
+                        menukeys.Add(key);
+                    }
+                }
+                return  menukeys;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertMenukeysIntoUserGroup(DO_UserGroup selectedkeys)
+        {
+            try
+            {
+                bool flag = false;
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    IEnumerable<GtEuusgr> Uglist = db.GtEuusgr.Where(u => u.UserGroup == selectedkeys.uG && u.UserType== selectedkeys.uT).ToList();
+
+                    foreach (var i in selectedkeys.dataList)
+                    {
+                        if (i.StartsWith("0"))
+                        {
+                            foreach (GtEuusgr obj in Uglist)
+                            {
+                                if (Convert.ToInt32(i.Substring(1)) == obj.MenuKey)
+                                {
+                                    db.GtEuusgr.Remove(obj);
+                                }
+                            }
+                        }
+                        //add to usergroup table
+                        else
+                        {
+                            GtEuusgr ugObj;
+                            byte count = 0;
+                            foreach (GtEuusgr obj in Uglist)
+                            {
+                                if (Convert.ToInt32(i) == obj.MenuKey)
+                                {
+                                    count = 1;
+                                    break;
+                                }
+                            }
+                            if (count == 0)
+                            {
+                                ugObj = new GtEuusgr();
+                                ugObj.UserGroup = selectedkeys.uG;
+                                ugObj.UserType = selectedkeys.uT;
+                                ugObj.MenuKey = Convert.ToInt32(i);
+                                ugObj.ActiveStatus = true;
+                                ugObj.CreatedBy = selectedkeys.UserID;
+                                ugObj.CreatedOn = DateTime.Now;
+                                ugObj.CreatedTerminal = selectedkeys.TerminalID;
+                                db.GtEuusgr.Add(ugObj);
+
+                            }
+
+                            
+                        }
+                    }
+
+                    await db.SaveChangesAsync();
+                    flag = true;
+                }
+                if (flag == true)
+                {
+                    return new DO_ReturnParameter() { Status = true, Message = "User Group Saved Successfully." };
+                }
+                else
+                {
+                    return new DO_ReturnParameter() { Status = true, Message = "User Group Saved UnSuccessfully." };
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion User Group
+
+    }
+
+}

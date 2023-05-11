@@ -1,0 +1,158 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class LocalizationController : ControllerBase
+    {
+        private readonly ILocalizationMasterRepository _LocalizationMasterRepository;
+        public LocalizationController(ILocalizationMasterRepository LocalizationMasterRepository)
+        {
+            _LocalizationMasterRepository = LocalizationMasterRepository;
+        }
+        #region Localization Table Mapping
+
+        /// <summary>
+        /// Getting  Localization Master Tables List.
+        /// UI Reffered - Localization Master Grid
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLocalizationTableMaster()
+        {
+            var loc_tables =await _LocalizationMasterRepository.GetLocalizationTableMaster();
+            return Ok(loc_tables);
+        }
+
+        /// <summary>
+        /// Insert into Localization Master.
+        /// UI Reffered - Localization Master
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLocalizationTableMaster(DO_LocalizationMaster obj)
+        {
+            var msg =await _LocalizationMasterRepository.InsertOrUpdateLocalizationTableMaster(obj);
+            return Ok(msg);
+
+        }
+        
+        #endregion
+
+        #region Localization Language Mapping
+
+        /// <summary>
+        /// Getting  Localization Master for Dropdown.
+        /// UI Reffered - Localization Master.
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLocalizationMaster()
+        {
+            var loc_tables =await _LocalizationMasterRepository.GetLocalizationMaster();
+            return Ok(loc_tables);
+        }
+        /// <summary>
+        /// InsertOrUpdate Localization Language Mapping.
+        /// UI Reffered - Localization Language Mapping
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLocalizationLanguageMapping(List<DO_LocalizationLanguageMapping> obj)
+        {
+            var msg =await _LocalizationMasterRepository.InsertOrUpdateLocalizationLanguageMapping(obj);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Getting Localization Language Mapping.
+        /// UI Reffered - Localization Language Grid
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetLocalizationLanguageMapping(string languageCode, int tableCode)
+        {
+            var loc_langs = _LocalizationMasterRepository.GetLocalizationLanguageMapping(languageCode, tableCode);
+            return Ok(loc_langs);
+        }
+
+        #endregion
+
+        #region Language Controller
+        /// <summary>
+        /// Getting  All Controllers for dropdown.
+        /// UI Reffered - Localization Language Controller
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllControllers()
+        {
+            var ctrls = await _LocalizationMasterRepository.GetAllControllers();
+            return Ok(ctrls);
+        }
+        /// <summary>
+        /// Getting  Language Controllers by Resource for Grid.
+        /// UI Reffered - Language Controllers.
+        /// UI Params-Resource
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLanguageControllersbyResource(string Resource)
+        {
+            var resources = await _LocalizationMasterRepository.GetLanguageControllersbyResource(Resource);
+            return Ok(resources);
+        }
+        /// <summary>
+        /// InsertOrUpdate Language Controllers.
+        /// UI Reffered - Localization Language Mapping
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLanguageController(DO_LanguageController lobj)
+        {
+            var msg = await _LocalizationMasterRepository.InsertOrUpdateLanguageController(lobj);
+            return Ok(msg);
+
+        }
+        #endregion Language Controller
+
+        #region Language Culture
+        /// <summary>
+        /// Getting  Language Resources for Dropdown.
+        /// UI Reffered - Language Culture.
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetResources()
+        {
+            var resources = await _LocalizationMasterRepository.GetResources();
+            return Ok(resources);
+        }
+        /// <summary>
+        /// Getting  Language Culture by Culture and  ResourceId for Grid.
+        /// UI Reffered - Language Culture.
+        /// UI Params-Culture and  ResourceId
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLanguageCulture(string Culture, string Resource)
+        {
+            var cultures = await _LocalizationMasterRepository.GetLanguageCulture(Culture,Resource);
+            return Ok(cultures);
+        }
+        /// <summary>
+        /// InsertOrUpdate Resource Culture.
+        /// UI Reffered - Resource Culture
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLanguageCulture(List<DO_LanguageCulture> obj)
+        {
+            var msg = await _LocalizationMasterRepository.InsertOrUpdateLanguageCulture(obj);
+            return Ok(msg);
+
+        }
+        #endregion Language Culture
+    }
+}

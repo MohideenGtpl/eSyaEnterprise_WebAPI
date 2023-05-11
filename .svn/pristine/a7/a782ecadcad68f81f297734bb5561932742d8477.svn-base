@@ -1,0 +1,84 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class LocalizationController : ControllerBase
+    {
+        private readonly ILocalizationMasterRepository _LocalizationMasterRepository;
+        public LocalizationController(ILocalizationMasterRepository LocalizationMasterRepository)
+        {
+            _LocalizationMasterRepository = LocalizationMasterRepository;
+        }
+        #region Localization Table Mapping
+
+        /// <summary>
+        /// Getting  Localization Master Tables List.
+        /// UI Reffered - Localization Master Grid
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLocalizationTableMaster()
+        {
+            var loc_tables =await _LocalizationMasterRepository.GetLocalizationTableMaster();
+            return Ok(loc_tables);
+        }
+
+        /// <summary>
+        /// Insert into Localization Master.
+        /// UI Reffered - Localization Master
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLocalizationTableMaster(DO_LocalizationMaster obj)
+        {
+            var msg =await _LocalizationMasterRepository.InsertOrUpdateLocalizationTableMaster(obj);
+            return Ok(msg);
+
+        }
+        
+        #endregion
+
+        #region Localization Language Mapping
+
+        /// <summary>
+        /// Getting  Localization Master for Dropdown.
+        /// UI Reffered - Localization Master.
+        /// </summary>
+
+        [HttpGet]
+        public async Task<IActionResult> GetLocalizationMaster()
+        {
+            var loc_tables =await _LocalizationMasterRepository.GetLocalizationMaster();
+            return Ok(loc_tables);
+        }
+        /// <summary>
+        /// InsertOrUpdate Localization Language Mapping.
+        /// UI Reffered - Localization Language Mapping
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateLocalizationLanguageMapping(List<DO_LocalizationLanguageMapping> obj)
+        {
+            var msg =await _LocalizationMasterRepository.InsertOrUpdateLocalizationLanguageMapping(obj);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Getting Localization Language Mapping.
+        /// UI Reffered - Localization Language Grid
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetLocalizationLanguageMapping(string languageCode, int tableCode)
+        {
+            var loc_langs = _LocalizationMasterRepository.GetLocalizationLanguageMapping(languageCode, tableCode);
+            return Ok(loc_langs);
+        }
+        
+        #endregion
+    }
+}

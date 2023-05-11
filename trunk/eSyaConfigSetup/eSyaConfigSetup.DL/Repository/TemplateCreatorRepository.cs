@@ -1,0 +1,312 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+   public class TemplateCreatorRepository: ITemplateCreatorRepository
+    {
+        #region Template Creator
+
+        public async Task<List<DO_TemplateCreator>> GetAllTemplates()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEctm01
+                         .AsNoTracking()
+                         .Select(t => new DO_TemplateCreator
+                         {
+                            TemplateId=t.TemplateId,
+                            TemplateName=t.TemplateName,
+                            DispSeqId=t.DispSeqId,
+                            ActiveStatus = t.ActiveStatus
+                         }).OrderBy(o => o.TemplateName).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoTemplateCreator(DO_TemplateCreator obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_TemplateIdExist = db.GtEctm01.Any(t => t.TemplateId == obj.TemplateId);
+                        if (is_TemplateIdExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template Id is already exist." };
+                        }
+
+                        bool is_TemplateNameExist = db.GtEctm01.Any(a => a.TemplateName.Trim().ToUpper().Replace(" ", "") == obj.TemplateName.Trim().ToUpper().Replace(" ", ""));
+                        if (is_TemplateNameExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template Name is already exist." };
+                        }
+                       
+                        var temp_cr = new GtEctm01
+                        {
+                            TemplateId = obj.TemplateId,
+                            TemplateName = obj.TemplateName,
+                            DispSeqId=obj.DispSeqId,
+                            ActiveStatus = obj.ActiveStatus,
+                            //FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEctm01.Add(temp_cr);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Template Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateTemplateCreator(DO_TemplateCreator obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEctm01 temp_cr = db.GtEctm01.Where(w => w.TemplateId == obj.TemplateId).FirstOrDefault();
+                        if (temp_cr == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template is not exist" };
+                        }
+                        bool is_TemplateNameExist = db.GtEctm01.Any(a => a.TemplateName.Trim().ToUpper().Replace(" ", "") == obj.TemplateName.Trim().ToUpper().Replace(" ", "") && a.TemplateId != obj.TemplateId);
+                        if (is_TemplateNameExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template Name is already exist." };
+                        }
+                        temp_cr.TemplateName = obj.TemplateName;
+                        temp_cr.DispSeqId = obj.DispSeqId;
+                        temp_cr.ActiveStatus = obj.ActiveStatus;
+                        temp_cr.ModifiedBy = obj.UserID;
+                        temp_cr.ModifiedOn = DateTime.Now;
+                        temp_cr.ModifiedTerminal = obj.TerminalID;
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Template Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> ActiveOrDeActiveTemplateCreator(bool status, int TemplateId)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEctm01 tem = db.GtEctm01.Where(w => w.TemplateId == TemplateId ).FirstOrDefault();
+                        if (tem == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template is not exist" };
+                        }
+
+                        tem.ActiveStatus = status;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        if (status == true)
+                            return new DO_ReturnParameter() { Status = true, Message = "Template Activated Successfully." };
+                        else
+                            return new DO_ReturnParameter() { Status = true, Message = "Template De Activated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion Template Creator
+
+        #region Examination
+
+        public async Task<List<DO_Examination>> GetExaminationsByTemplateId(int TemplateId)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEctm02
+                         .Where(w => w.TemplateId == TemplateId)
+                         .Select(e => new DO_Examination
+                         {
+                             TemplateId = e.TemplateId,
+                             ExaminationId = e.ExaminationId,
+                             ExaminationName = e.ExaminationName,
+                             ValueType = e.ValueType,
+                             OptionValues=e.OptionValues,
+                             DispSeqId=e.DispSeqId,
+                             ActiveStatus = e.ActiveStatus
+
+                         }).OrderBy(o => o.ExaminationId).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoExamination(DO_Examination obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_ExaminationNameExist = db.GtEctm02.Any(a => a.ExaminationName.Trim().ToUpper().Replace(" ", "") == obj.ExaminationName.Trim().ToUpper().Replace(" ", "") && a.TemplateId == obj.TemplateId);
+                        if (is_ExaminationNameExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Examination Name is already exist in this Template." };
+                        }
+                        int maxval = db.GtEctm02.Where(x => x.TemplateId == obj.TemplateId).Select(c => c.ExaminationId).DefaultIfEmpty().Max();
+                        int _ExaminationId = maxval + 1;
+                        var objExam = new GtEctm02
+                        {
+                            TemplateId=obj.TemplateId,
+                            ExaminationId= _ExaminationId,
+                            ExaminationName=obj.ExaminationName,
+                            ValueType=obj.ValueType,
+                            OptionValues=obj.OptionValues,
+                            DispSeqId=obj.DispSeqId,
+                            ActiveStatus = obj.ActiveStatus,
+                            //FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEctm02.Add(objExam);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Examination Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateExamination(DO_Examination obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_ExaminationExist = db.GtEctm02.Where(w => w.ExaminationName.Trim().ToUpper().Replace(" ", "") == obj.ExaminationName.Trim().ToUpper().Replace(" ", "")
+                                && w.ExaminationId != obj.ExaminationId && w.TemplateId == obj.TemplateId).FirstOrDefault();
+                        if (is_ExaminationExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Examination Name is already exist." };
+                        }
+
+                        GtEctm02 objExam = db.GtEctm02.Where(w => w.ExaminationId == obj.ExaminationId && w.TemplateId == obj.TemplateId).FirstOrDefault();
+                        if (objExam == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Examination Name is not exist" };
+                        }
+
+                        objExam.ExaminationName = obj.ExaminationName;
+                        objExam.ValueType = obj.ValueType;
+                        objExam.OptionValues = obj.OptionValues;
+                        objExam.DispSeqId = obj.DispSeqId;
+                        objExam.ActiveStatus = obj.ActiveStatus;
+                        objExam.ModifiedBy = obj.UserID;
+                        objExam.ModifiedOn = DateTime.Now;
+                        objExam.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Examination Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion Examination
+    }
+}

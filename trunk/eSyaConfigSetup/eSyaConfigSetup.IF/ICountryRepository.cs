@@ -1,0 +1,37 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ICountryRepository
+    {
+        #region Country Codes
+        Task<List<DO_CountryCodes>> GetAllCountryCodesAsync();
+        Task<DO_ReturnParameter> InsertIntoCountryCode(DO_CountryCodes countrycode);
+        Task<DO_ReturnParameter> UpdateCountryCode(DO_CountryCodes countrycode);
+        Task<DO_CountryCodes> GetCurrencyNamebyIsdCode(int IsdCode);
+        Task<DO_ReturnParameter> ActiveOrDeActiveCountryCode(bool status, int Isd_code);
+        #endregion Country Codes
+
+        #region Statutory Details
+
+        Task<List<DO_eSyaParameter>> GetStatutoryCodesParameterList(int IsdCode, int StatutoryCode);
+
+        Task<List<DO_CountryStatutoryDetails>> GetStatutoryCodesbyIsdcode(int Isdcode);
+
+        Task<DO_ReturnParameter> InsertOrUpdateStatutoryCodes(DO_CountryStatutoryDetails obj);
+
+        Task<List<DO_CountryStatutoryDetails>> GetActiveStatutoryCodes();
+
+        Task<DO_ReturnParameter> ActiveOrDeActiveStatutoryCode(bool status, int Isd_code, int statutorycode);
+        #endregion Statutory Details
+
+        #region Tax Identification
+        Task<List<DO_TaxIdentification>> GetActiveTaxIdentification();
+        Task<List<DO_TaxIdentification>> GetTaxIdentificationByBSeg(int BusinessId, int SegmentId);
+        #endregion Identification
+    }
+}

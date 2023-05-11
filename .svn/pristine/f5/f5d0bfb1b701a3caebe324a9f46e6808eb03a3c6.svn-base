@@ -1,0 +1,14 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IUserManagementRepository
+    {
+      List<int> GetMenuKeysbyUserGroupAndUserType(int uG, int uT);
+
+      DO_ReturnParameter InsertMenukeysIntoUserGroup(DO_UserGroup selectedkeys);
+    }
+}

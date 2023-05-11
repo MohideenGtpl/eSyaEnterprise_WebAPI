@@ -1,0 +1,94 @@
+﻿using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class SMSEngineController : ControllerBase
+    {
+        private readonly ISMSEngineRepository _SMSEngineRepository;
+        public SMSEngineController(ISMSEngineRepository smsEngineRepository)
+        {
+            _SMSEngineRepository = smsEngineRepository;
+        }
+
+        /// <summary>
+        /// Get SMS Variable Information.
+        /// UI Reffered - SMS Variable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetSMSVariableInformation()
+        {
+            var sm_sv = await _SMSEngineRepository.GetSMSVariableInformation();
+            return Ok(sm_sv);
+        }
+
+        /// <summary>
+        /// Insert into SMS Variable .
+        /// UI Reffered - SMS Variable
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoSMSVariable(DO_SMSVariable obj)
+        {
+            var msg = await _SMSEngineRepository.InsertIntoSMSVariable(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update SMS Variable .
+        /// UI Reffered - SMS Variable
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateSMSVariable(DO_SMSVariable obj)
+        {
+            var msg = await _SMSEngineRepository.UpdateSMSVariable(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Get SMS Header Information by Formid.
+        /// UI Reffered - SMS Information
+        /// </summary>
+        /// <param name="formId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetSMSHeaderInformationByFormId(int formId)
+        {
+            var sm_sh = await _SMSEngineRepository.GetSMSHeaderInformationByFormId(formId);
+            return Ok(sm_sh);
+        }
+
+        /// <summary>
+        /// Insert into SMS Header .
+        /// UI Reffered - SMS Information
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoSMSHeader(DO_SMSHeader obj)
+        {
+            var msg = await _SMSEngineRepository.InsertIntoSMSHeader(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update SMS Header .
+        /// UI Reffered - SMS Information
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateSMSHeader(DO_SMSHeader obj)
+        {
+            var msg = await _SMSEngineRepository.UpdateSMSHeader(obj);
+            return Ok(msg);
+
+        }
+    }
+}

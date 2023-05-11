@@ -1,0 +1,121 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CountryController : ControllerBase
+    {
+        private readonly ICountryRepository _CountryRepository;
+        public CountryController(ICountryRepository CountryRepository)
+        {
+            _CountryRepository = CountryRepository;
+        }
+        #region Country Codes
+        /// <summary>
+        /// Getting  Country Codes List.
+        /// UI Reffered - Country Codes Grid
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetAllCountryCodes()
+        {
+            var countries = _CountryRepository.GetAllCountryCodes();
+            return Ok(countries);
+        }
+        /// <summary>
+        /// Insert Country Codes.
+        /// UI Reffered -Country Codes
+        /// </summary>
+        [HttpPost]
+        public IActionResult InsertIntoCountryCode(DO_CountryCodes countrycode)
+        {
+            var msg = _CountryRepository.InsertIntoCountryCode(countrycode);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Update Country Codes.
+        /// UI Reffered -Country Codes
+        /// </summary>
+        [HttpPost]
+        public IActionResult UpdateCountryCode(DO_CountryCodes countrycode)
+        {
+            var msg = _CountryRepository.UpdateCountryCode(countrycode);
+            return Ok (msg);
+
+        }
+        /// <summary>
+        /// Get Currency Name by Isd Code.
+        /// UI Reffered -Business Segment
+        /// UI Param-IsdCode
+        /// Business Segment
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetCurrencyNamebyIsdCode(int IsdCode)
+        {
+            var currencies = _CountryRepository.GetCurrencyNamebyIsdCode(IsdCode);
+           return Ok(currencies);
+           
+        }
+        
+        #endregion Country Codes
+
+        #region Statutory Details
+        /// <summary>
+        /// Getting  Statutory Codes by ISD Code.
+        /// UI Reffered - Country 
+        /// UI-Paramm -Isdcode
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetStatutoryCodesbyIsdcode(int Isdcode)
+        {
+          var stat_codes = _CountryRepository.GetStatutoryCodesbyIsdcode(Isdcode);
+          return Ok(stat_codes);
+           
+        }
+        /// <summary>
+        /// Insert OR Up date Statutory Codes.
+        /// UI Reffered -Country
+        /// </summary>
+        [HttpPost]
+        public IActionResult InsertOrUpdateStatutoryCodes(DO_CountryStatutoryDetails statutorycodes)
+        {
+            var msg = _CountryRepository.InsertOrUpdateStatutoryCodes(statutorycodes);
+            return Ok (msg);
+
+        }
+
+
+        /// <summary>
+        /// Getting  Statutory Codes for dropdown.
+        /// UI Reffered - Business Statutory Details 
+       
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetActiveStatutoryCodes()
+        {
+            var astat_codes = _CountryRepository.GetActiveStatutoryCodes();
+           return Ok(astat_codes);
+            
+        }
+        #endregion Statutory Details
+
+        #region  Tax Identification
+
+        /// <summary>
+        /// Getting  Tax IdentIfication for Dropdown.
+        /// UI Reffered - Business Segment
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetActiveTaxIdentification()
+        {
+            var tax_ident = _CountryRepository.GetActiveTaxIdentification();
+            return Ok(tax_ident);
+          
+        }
+        #endregion Tax Identification
+    }
+}

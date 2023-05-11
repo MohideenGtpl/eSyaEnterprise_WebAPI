@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>eSyaConfigSetup.DO</id>
+    <version>1.0.0</version>
+    <authors>eSyaConfigSetup.DO</authors>
+    <owners>eSyaConfigSetup.DO</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework=".NETCoreApp2.2" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DO\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.dll" target="lib\netcoreapp2.2\eSyaConfigSetup.DO.dll" />
+  </files>
+</package>

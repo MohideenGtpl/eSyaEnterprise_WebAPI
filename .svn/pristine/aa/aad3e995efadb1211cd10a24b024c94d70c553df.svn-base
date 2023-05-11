@@ -1,0 +1,35 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ICurrencyMasterRepository
+    {
+        #region Currency Master
+
+        List<DO_CurrencyMaster> GetCurrencyMaster();
+
+        List<DO_CurrencyMaster> GetActiveCurrencyList();
+
+        List<DO_CurrencyMaster> GetCurrencyListByCurrenyPrefix(string currencyPrefix);
+
+        DO_ReturnParameter InsertIntoCurrencyMaster(DO_CurrencyMaster obj);
+
+        DO_ReturnParameter UpdateCurrencyMaster(DO_CurrencyMaster obj);
+
+        DO_ReturnParameter DeleteCurrencyMasterByCurrencyCode(string currencyCode);
+        #endregion
+
+        #region Currency Denomination Information
+
+        List<DO_CurrencyDenominationInformation> GetCurrencyDenominationInfoByCurrencyCode(string currencyCode);
+
+        DO_ReturnParameter InsertOrUpdateCurrencyDenominationInformation(DO_CurrencyDenominationInformation obj);
+
+        DO_ReturnParameter DeleteCurrencyDenominationInformation(string currencyCode, decimal denomination);
+
+        #endregion
+    }
+}

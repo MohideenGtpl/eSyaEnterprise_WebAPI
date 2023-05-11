@@ -1,0 +1,43 @@
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.deps.json
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csprojAssemblyReference.cache
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csproj.CoreCompileInputs.cache
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfoInputs.cache
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfo.cs
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.json
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.dev.json
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Enterprise\eSyaEnterprise_WebAPI\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.deps.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.dev.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csprojAssemblyReference.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csproj.CoreCompileInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfoInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfo.cs
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csproj.CopyComplete
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.deps.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.runtimeconfig.dev.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csprojAssemblyReference.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csproj.CoreCompileInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfoInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.AssemblyInfo.cs
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.csproj.CopyComplete
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.DL\obj\Debug\netcoreapp2.2\eSyaConfigSetup.DL.pdb

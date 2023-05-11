@@ -1,0 +1,629 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class DocumentControlRepository:IDocumentControlRepository
+    {
+        #region Document Control
+        public List<DO_DocumentControl> GetDocumentControls()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmdccn.Join(db.GtCmfmfd,
+                        d => d.FormId,
+                        f => f.FormId,
+                        (d, f) => new DO_DocumentControl
+                       {
+                        FormId = d.FormId,
+                        DocumentId  = d.DocumentId,
+                        DocumentType= d.DocumentType,
+                        DocumentCode= d.DocumentCode,
+                        DocCodeDesc = d.DocCodeDesc,
+                        DocumentCategory = d.DocumentCategory,
+                        DocCatgDesc = d.DocCatgDesc,
+                        IsFinancialYearAppl= d.IsFinancialYearAppl,
+                        IsStoreLinkAppl = d.IsStoreLinkAppl,
+                        IsTransactionModeAppl= d.IsTransactionModeAppl,
+                        IsCustomerGroupAppl = d.IsCustomerGroupAppl,
+                        LinkToDashboard = d.LinkToDashboard,
+                        UsageStatus = d.UsageStatus,
+                        ActiveStatus = d.ActiveStatus,
+                        FormName=f.FormName
+
+                  }).ToList();
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertDocumentControl(DO_DocumentControl control)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var isdocumentIdExists = db.GtCmdccn.Where(d => d.FormId == control.FormId && d.DocumentId==control.DocumentId).FirstOrDefault();
+                        if (isdocumentIdExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Document Id is already exist with selected Form." };
+                        }
+                        var isdocumentCodeExists = db.GtCmdccn.Where(d => d.DocumentCode.ToUpper().Replace(" ", "") == control.DocumentCode.ToUpper().Replace(" ", "") && d.FormId == control.FormId).FirstOrDefault();
+                        if (isdocumentCodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Document Code is already exist with selected Form." };
+                        }
+                        var doc_ctrl = new GtCmdccn
+                        {
+                            FormId = control.FormId,
+                            DocumentId = control.DocumentId,
+                            DocumentType = control.DocumentType,
+                            DocumentCode = control.DocumentCode,
+                            DocCodeDesc = control.DocCodeDesc,
+                            DocumentCategory = control.DocumentCategory,
+                            DocCatgDesc = control.DocCatgDesc,
+                            IsFinancialYearAppl = control.IsFinancialYearAppl,
+                            IsStoreLinkAppl = control.IsStoreLinkAppl,
+                            IsTransactionModeAppl = control.IsTransactionModeAppl,
+                            IsCustomerGroupAppl = control.IsCustomerGroupAppl,
+                            LinkToDashboard = control.LinkToDashboard,
+                            UsageStatus = control.UsageStatus,
+                            ActiveStatus = control.ActiveStatus,
+                            CreatedBy = control.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = control.TerminalID
+                        };
+                        db.GtCmdccn.Add(doc_ctrl);
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Document Control Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateDocumentControl(DO_DocumentControl control)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                       
+                        var isdocumentCodeExists = db.GtCmdccn.Where(d => d.DocumentCode.ToUpper().Replace(" ", "") == control.DocumentCode.ToUpper().Replace(" ", "") && d.FormId == control.FormId
+                        && d.DocumentId != control.DocumentId).FirstOrDefault();
+                        if (isdocumentCodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Document Code is already exist with selected Form." };
+                        }
+                        GtCmdccn doc_ctrl = db.GtCmdccn.Where(dc =>dc.FormId==control.FormId&&dc.DocumentId==control.DocumentId).FirstOrDefault();
+                        if (doc_ctrl != null)
+                        {
+                            doc_ctrl.DocumentType = control.DocumentType;
+                            doc_ctrl.DocumentCode = control.DocumentCode;
+                            doc_ctrl.DocCodeDesc = control.DocCodeDesc;
+                            doc_ctrl.DocumentCategory = control.DocumentCategory;
+                            doc_ctrl.DocCatgDesc = control.DocCatgDesc;
+                            doc_ctrl.IsFinancialYearAppl = control.IsFinancialYearAppl;
+                            doc_ctrl.IsStoreLinkAppl = control.IsStoreLinkAppl;
+                            doc_ctrl.IsTransactionModeAppl = control.IsTransactionModeAppl;
+                            doc_ctrl.IsCustomerGroupAppl = control.IsCustomerGroupAppl;
+                            doc_ctrl.LinkToDashboard = control.LinkToDashboard;
+                            doc_ctrl.UsageStatus = control.UsageStatus;
+                            doc_ctrl.ActiveStatus = control.ActiveStatus;
+                            doc_ctrl.ModifiedBy = control.UserID;
+                            doc_ctrl.ModifiedOn = System.DateTime.Now;
+                            doc_ctrl.ModifiedTerminal = control.TerminalID;
+                            db.SaveChanges();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Document Control Updated Successfully." };
+
+                        }
+
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Document Control does Not Exists." };
+
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion Document Control
+
+        #region Calendar Defination
+        public DO_ReturnParameter InsertCalendarHeaderAndDetails(DO_CalendarDefinition calendarheadar)
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    using (var dbContext = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+
+                            int financialcalr = Convert.ToInt32(calendarheadar.FinancialYear);
+
+                            var isCalendarExists = db.GtCmescl.Where(x => x.FinancialYear == financialcalr && x.Status == true).FirstOrDefault();
+
+                            if (isCalendarExists == null)
+                            {
+                                GtCmescl calheader = new GtCmescl();
+                                calheader.FinancialYear = Convert.ToInt32(calendarheadar.FinancialYear);
+                                calheader.FromDate = calendarheadar.FromDate;
+                                calheader.TillDate = calendarheadar.TillDate;
+                                calheader.Status = calendarheadar.Status;
+                                calheader.FormId = calendarheadar.FormId;
+                                calheader.CreatedBy = calendarheadar.UserID;
+                                calheader.CreatedOn =System.DateTime.Now;
+                                calheader.CreatedTerminal = calendarheadar.TerminalID;
+                                db.GtCmescl.Add(calheader);
+                                db.SaveChanges();
+                                List<int> MonthIds = new List<int>();
+                                string months;
+                                var financeyear = Convert.ToInt32(calendarheadar.FinancialYear);
+
+                                for (int i = calendarheadar.FromDate.Month; i <= calendarheadar.TillDate.Month; i++)
+                                {
+                                if (i.ToString().Length == 1)
+                                {
+                                    string strMonth = 0 + i.ToString();
+                                    months = financeyear.ToString() + "" + strMonth;
+                                }
+                                else
+                                {
+                                    months = financeyear.ToString() + "" + i.ToString();
+                                   
+                                }
+                                
+                                MonthIds.Add(Convert.ToInt32(months));
+                            }
+
+                                GtCmclco caldetails = new GtCmclco();
+
+                            var BusinessKeys = db.GtCmbslo.Where(x => x.ActiveStatus == true).ToList();
+                            foreach (var bkey in BusinessKeys)
+                            {
+                                foreach (var month in MonthIds)
+                                {
+                                var calendardetailsExists = db.GtCmclco.Where(x => x.BusinessKey == bkey.BusinessKey &&
+                                  x.FinancialYear == Convert.ToInt32(calendarheadar.FinancialYear) && x.MonthId == month && x.ActiveStatus==true).FirstOrDefault();
+                                if (calendardetailsExists != null)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Month is Already Exists for the Financial Year and Business Key." };
+                                }
+                                else
+                                {
+                                    caldetails.BusinessKey = bkey.BusinessKey;
+                                    caldetails.FinancialYear = Convert.ToInt32(calendarheadar.FinancialYear);
+                                    caldetails.MonthId = month;
+                                    caldetails.MonthFreezeHis = false;
+                                    caldetails.MonthFreezeFin = false;
+                                    caldetails.MonthFreezeHr = false;
+                                    caldetails.PatientIdgen = 0;
+                                    caldetails.PatientIdserial = "0";
+                                    caldetails.BudgetMonth = "Q";
+                                    caldetails.ActiveStatus = true;
+                                    caldetails.FormId = calendarheadar.FormId;
+                                    caldetails.CreatedBy = calendarheadar.UserID;
+                                    caldetails.CreatedOn = DateTime.Now;
+                                    caldetails.CreatedTerminal = calendarheadar.TerminalID;
+                                    db.GtCmclco.Add(caldetails);
+                                    db.SaveChanges();
+                                }
+                              }
+                            }
+
+                            dbContext.Commit();
+                           
+                                return new DO_ReturnParameter() { Status = true, Message = "Calender Created Successfully." };
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Calendar Already Exists." };
+                            }
+                        }
+
+                        catch (Exception ex)
+                        {
+                            dbContext.Rollback();
+                            throw ex;
+                        }
+                    }
+
+
+
+
+                }
+            }
+
+        public DO_ReturnParameter UpdateCalendardetails(DO_CalendarDetails caldetails)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var calendardetails = db.GtCmclco.Where(x => x.MonthId == caldetails.MonthId && x.BusinessKey == caldetails.BusinessKey && x.FinancialYear ==Convert.ToInt32(caldetails.FinancialYear)).FirstOrDefault();
+                        if (calendardetails != null)
+                        {
+                            calendardetails.MonthFreezeHis = caldetails.MonthFreezeHis;
+                            calendardetails.MonthFreezeFin = caldetails.MonthFreezeFin;
+                            calendardetails.MonthFreezeHr = caldetails.MonthFreezeHr;
+                            //calendardetails.PatientIdgen = caldetails.PatientIdgen;
+                            calendardetails.PatientIdserial = caldetails.PatientIdserial;
+                            calendardetails.BudgetMonth = caldetails.BudgetMonth;
+                            calendardetails.ActiveStatus = caldetails.ActiveStatus;
+                            db.SaveChanges();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Calendar details updated Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Calendar details not found." };
+                        }
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+       
+        public List<DO_CalendarDetails> GetCalendarDetailsbyBusinessKeyAndFinancialYear(int BusinessKey ,decimal FinancialYear)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    if (BusinessKey != 0 && FinancialYear == 0)
+                    {
+                        return GetCalendarDetailsbyBusinessKey(BusinessKey);
+                    }
+                    var result = db.GtCmclco.Where(h =>h.BusinessKey==BusinessKey && h.FinancialYear == FinancialYear).Join(db.GtCmescl,
+                     x => x.FinancialYear,
+                     y => y.FinancialYear,
+
+                     (x, y) => new DO_CalendarDetails
+                     {
+
+                         BusinessKey=x.BusinessKey,
+                         FinancialYear = y.FinancialYear,
+                         MonthId = x.MonthId,
+                         EditMonthId = x.MonthId,
+                         MonthFreezeHis = x.MonthFreezeHis,
+                         MonthFreezeFin = x.MonthFreezeFin,
+                         MonthFreezeHr = x.MonthFreezeHr,
+                         PatientIdgen = x.PatientIdgen,
+                         PatientIdserial = x.PatientIdserial,
+                         BudgetMonth = x.BudgetMonth,
+                         ActiveStatus = x.ActiveStatus,
+                         Fromdate = y.FromDate,
+                         Tilldate = y.TillDate,
+                      
+                     }).ToList();
+
+                    List<DO_CalendarDetails> CalendarDtailslist = new List<DO_CalendarDetails>();
+
+                    foreach (var item in result)
+                    {
+                        DO_CalendarDetails objcalendar = new DO_CalendarDetails();
+                        objcalendar.BusinessKey = item.BusinessKey;
+                        objcalendar.FinancialYear = item.FinancialYear;
+                        objcalendar.MonthId = item.MonthId;
+                        objcalendar.EditMonthId = item.MonthId;
+                        objcalendar.MonthFreezeHis = item.MonthFreezeHis;
+                        objcalendar.MonthFreezeFin = item.MonthFreezeFin;
+                        objcalendar.MonthFreezeHr = item.MonthFreezeHr;
+                        objcalendar.PatientIdgen = item.PatientIdgen;
+                        objcalendar.PatientIdserial = item.PatientIdserial;
+                        objcalendar.BudgetMonth = item.BudgetMonth;
+                        objcalendar.ActiveStatus = item.ActiveStatus;
+                        objcalendar.Fromdate = item.Fromdate;
+                        objcalendar.Tilldate = item.Tilldate;
+                        String Monthlength = item.MonthId.ToString();
+                        String firstletter = "";
+                        if (!string.IsNullOrEmpty(Monthlength))
+                        {
+                            firstletter = Monthlength.Remove(0, 4);
+                        }
+                       
+                        if (firstletter == "01")
+                        {
+                            objcalendar.MonthDescription = "January";
+
+
+                        }
+                        if (firstletter == "02")
+                        {
+                            objcalendar.MonthDescription = "February";
+
+                        }
+                        if (firstletter == "03")
+                        {
+                            objcalendar.MonthDescription = "March";
+
+                        }
+                        if (firstletter == "04")
+                        {
+                            objcalendar.MonthDescription = "April";
+
+                        }
+                        if (firstletter == "05")
+                        {
+                            objcalendar.MonthDescription = "May";
+
+                        }
+                        if (firstletter == "06")
+                        {
+                            objcalendar.MonthDescription = "June";
+
+                        }
+                        if (firstletter == "07")
+                        {
+                            objcalendar.MonthDescription = "July";
+
+                        }
+                        if (firstletter == "08")
+                        {
+                            objcalendar.MonthDescription = "August";
+
+                        }
+                        if (firstletter == "09")
+                        {
+                            objcalendar.MonthDescription = "September";
+
+                        }
+                        if (firstletter == "10")
+                        {
+                            objcalendar.MonthDescription = "October";
+
+                        }
+                        if (firstletter == "11")
+                        {
+                            objcalendar.MonthDescription = "November";
+
+                        }
+                        if (firstletter == "12")
+                        {
+                            objcalendar.MonthDescription = "December";
+
+                        }
+                        CalendarDtailslist.Add(objcalendar);
+                    }
+
+
+                    return CalendarDtailslist.ToList();
+
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public List<DO_CalendarDetails> GetCalendarDetailsbyBusinessKey(int BusinessKey)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmclco.Where(k=>k.BusinessKey==BusinessKey).Join(db.GtCmescl,
+                     x => x.FinancialYear,
+                     y => y.FinancialYear,
+
+                     (x, y) => new DO_CalendarDetails
+                     {
+
+                         BusinessKey = x.BusinessKey,
+                         FinancialYear = y.FinancialYear,
+                         MonthId = x.MonthId,
+                         EditMonthId = x.MonthId,
+                         MonthFreezeHis = x.MonthFreezeHis,
+                         MonthFreezeFin = x.MonthFreezeFin,
+                         MonthFreezeHr = x.MonthFreezeHr,
+                         PatientIdgen = x.PatientIdgen,
+                         PatientIdserial = x.PatientIdserial,
+                         BudgetMonth = x.BudgetMonth,
+                         ActiveStatus = x.ActiveStatus,
+                         Fromdate = y.FromDate,
+                         Tilldate = y.TillDate,
+
+                     }).ToList();
+
+                    List<DO_CalendarDetails> CalendarDtailslist = new List<DO_CalendarDetails>();
+
+                    foreach (var item in result)
+                    {
+                        DO_CalendarDetails objcalendar = new DO_CalendarDetails();
+                        objcalendar.BusinessKey = item.BusinessKey;
+                        objcalendar.FinancialYear = item.FinancialYear;
+                        objcalendar.MonthId = item.MonthId;
+                        objcalendar.EditMonthId = item.MonthId;
+                        objcalendar.MonthFreezeHis = item.MonthFreezeHis;
+                        objcalendar.MonthFreezeFin = item.MonthFreezeFin;
+                        objcalendar.MonthFreezeHr = item.MonthFreezeHr;
+                        objcalendar.PatientIdgen = item.PatientIdgen;
+                        objcalendar.PatientIdserial = item.PatientIdserial;
+                        objcalendar.BudgetMonth = item.BudgetMonth;
+                        objcalendar.ActiveStatus = item.ActiveStatus;
+                        objcalendar.Fromdate = item.Fromdate;
+                        objcalendar.Tilldate = item.Tilldate;
+                        String Monthlength = item.MonthId.ToString();
+                        String firstletter = "";
+                        if (!string.IsNullOrEmpty(Monthlength))
+                        {
+                            firstletter = Monthlength.Remove(0, 4);
+                        }
+                        if (firstletter == "01")
+                        {
+                            objcalendar.MonthDescription = "January";
+
+
+                        }
+                        if (firstletter == "02")
+                        {
+                            objcalendar.MonthDescription = "February";
+
+                        }
+                        if (firstletter == "03")
+                        {
+                            objcalendar.MonthDescription = "March";
+
+                        }
+                        if (firstletter == "04")
+                        {
+                            objcalendar.MonthDescription = "April";
+
+                        }
+                        if (firstletter == "05")
+                        {
+                            objcalendar.MonthDescription = "May";
+
+                        }
+                        if (firstletter == "06")
+                        {
+                            objcalendar.MonthDescription = "June";
+
+                        }
+                        if (firstletter == "07")
+                        {
+                            objcalendar.MonthDescription = "July";
+
+                        }
+                        if (firstletter == "08")
+                        {
+                            objcalendar.MonthDescription = "August";
+
+                        }
+                        if (firstletter == "09")
+                        {
+                            objcalendar.MonthDescription = "September";
+
+                        }
+                        if (firstletter == "10")
+                        {
+                            objcalendar.MonthDescription = "October";
+
+                        }
+                        if (firstletter == "11")
+                        {
+                            objcalendar.MonthDescription = "November";
+
+                        }
+                        if (firstletter == "12")
+                        {
+                            objcalendar.MonthDescription = "December";
+
+                        }
+                        CalendarDtailslist.Add(objcalendar);
+                    }
+
+
+                    return CalendarDtailslist.ToList();
+
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public List<DO_CalendarDefinition> GetCalendarHeaders()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmescl
+
+                                 .Select(c => new DO_CalendarDefinition
+                                 {
+                                     FinancialYear=c.FinancialYear,
+                                     FromDate=c.FromDate,
+                                     TillDate=c.TillDate,
+                                     Status=c.Status
+                                 }).OrderByDescending(x=>x.FinancialYear).ToList();
+                    return result;
+
+                 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<DO_CalendarDetails> GetFinancialYearbyBusinessKey(int Businesskey)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmclco.Where(x=>x.BusinessKey==Businesskey)
+
+                                 .Select(c => new DO_CalendarDetails
+                                 {
+                                     FinancialYear =c.FinancialYear
+                                     
+                                 }).OrderByDescending(x => x.FinancialYear).Distinct().ToList();
+                    return result;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion Calendar Defination
+    }
+}
+

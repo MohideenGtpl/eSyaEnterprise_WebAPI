@@ -1,0 +1,42 @@
+﻿using System;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class UserManagementController : ControllerBase
+    {
+        private readonly IUserManagementRepository _UserManagementRepository;
+        public UserManagementController(IUserManagementRepository UserManagementRepository)
+        {
+            _UserManagementRepository = UserManagementRepository;
+        }
+        #region User Group
+        /// <summary>
+        /// Getting  Country Codes List.
+        /// UI Reffered - Country Codes Grid
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetMenuKeysbyUserGroupAndUserType(int uG, int uT)
+        {
+            var menukeys = _UserManagementRepository.GetMenuKeysbyUserGroupAndUserType(uG,uT);
+            return Ok(menukeys);
+        }
+        /// <summary>
+        /// Insert into User Group
+        /// UI Reffered - User Group,
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertMenukeysIntoUserGroup(DO_UserGroup selectedkeys)
+        {
+            var msg =await _UserManagementRepository.InsertMenukeysIntoUserGroup(selectedkeys);
+            return Ok(msg);
+        }
+        #endregion User Group
+    }
+}

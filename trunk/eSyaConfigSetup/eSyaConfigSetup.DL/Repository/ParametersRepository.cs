@@ -1,0 +1,299 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class ParametersRepository:IParametersRepository
+    {
+        #region Parameter Header
+
+        public async Task<List<DO_Parameters>> GetParametersHeaderInformation()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEcparh
+                         .AsNoTracking()
+                         .Select(r => new DO_Parameters
+                         {
+                             ParameterType = r.ParameterType,
+                             ParameterHeaderDesc = r.ParameterHeaderDesc,
+                             ActiveStatus = r.ActiveStatus
+                         }).OrderBy(o => o.ParameterHeaderDesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoParameterHeader(DO_Parameters obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_ParameterIdExist = db.GtEcparh.Any(a => a.ParameterType == obj.ParameterType);
+                        if (is_ParameterIdExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Id is already exist." };
+                        }
+
+                        bool is_ParameterDescExist = db.GtEcparh.Any(a => a.ParameterHeaderDesc.Trim().ToUpper() == obj.ParameterHeaderDesc.Trim().ToUpper());
+                        if (is_ParameterDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Header Desc is already exist." };
+                        }
+                        //int maxval = db.GtEcparh.Select(c => c.ParameterType).DefaultIfEmpty().Max();
+                        //int _parameterType = maxval + 1;
+                        var pa_rh = new GtEcparh
+                        {
+                            ParameterType = obj.ParameterType,
+                            ParameterHeaderDesc = obj.ParameterHeaderDesc,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEcparh.Add(pa_rh);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Parameter Header Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateParameterHeader(DO_Parameters obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEcparh pa_rh = db.GtEcparh.Where(w => w.ParameterType == obj.ParameterType).FirstOrDefault();
+                        if (pa_rh == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Header is not exist" };
+                        }
+
+                        pa_rh.ParameterHeaderDesc = obj.ParameterHeaderDesc;
+                        pa_rh.ActiveStatus = obj.ActiveStatus;
+                        pa_rh.ModifiedBy = obj.UserID;
+                        pa_rh.ModifiedOn = DateTime.Now;
+                        pa_rh.ModifiedTerminal = obj.TerminalID;
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Parameter Header Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> ActiveOrDeActiveParameterHeader(bool status, int parm_type)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEcparh param = db.GtEcparh.Where(w => w.ParameterType == parm_type).FirstOrDefault();
+                        if (param == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Header is not exist" };
+                        }
+
+                        param.ActiveStatus = status;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        if (status == true)
+                            return new DO_ReturnParameter() { Status = true, Message = "Parameter Header Activated Successfully." };
+                        else
+                            return new DO_ReturnParameter() { Status = true, Message = "Parameter Header De Activated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion Parameter Header
+
+        #region Parameters
+
+        public async Task<List<DO_Parameters>> GetParametersInformationByParameterType(int parameterType)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEcparm
+                         .Where(w => w.ParameterType == parameterType)
+                         .Select(r => new DO_Parameters
+                         {
+                             ParameterType = r.ParameterType,
+                             ParameterId = r.ParameterId,
+                             ParameterDesc = r.ParameterDesc,
+                             ParameterValueType = r.ParameterValueType,
+                             ActiveStatus = r.ActiveStatus
+
+                         }).OrderBy(o => o.ParameterId).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoParameters(DO_Parameters obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_ParameterDescExist = db.GtEcparm.Any(a => a.ParameterDesc.Trim().ToUpper() == obj.ParameterDesc.Trim().ToUpper() && a.ParameterType == obj.ParameterType);
+                        if (is_ParameterDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Desc is already exist." };
+                        }
+                        int maxval = db.GtEcparm.Where(x => x.ParameterType == obj.ParameterType).Select(c => c.ParameterId).DefaultIfEmpty().Max();
+                        int _parameterId = maxval + 1;
+                        var pa_rm = new GtEcparm
+                        {
+                            ParameterType = obj.ParameterType,
+                            ParameterId = _parameterId,
+                            ParameterDesc = obj.ParameterDesc,
+                            ParameterValueType = obj.ParameterValueType,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEcparm.Add(pa_rm);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Parameter Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateParameters(DO_Parameters obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_ParameterExist = db.GtEcparm.Where(w => w.ParameterDesc.Trim().ToUpper().Replace(" ", "") == obj.ParameterDesc.Trim().ToUpper().Replace(" ", "")
+                                && w.ParameterId != obj.ParameterId && w.ParameterType == obj.ParameterType).FirstOrDefault();
+                        if (is_ParameterExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter Desc is already exist." };
+                        }
+
+                        GtEcparm pa_rm = db.GtEcparm.Where(w => w.ParameterId == obj.ParameterId && w.ParameterType == obj.ParameterType).FirstOrDefault();
+                        if (pa_rm == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Parameter is not exist" };
+                        }
+
+                        pa_rm.ParameterDesc = obj.ParameterDesc;
+                        pa_rm.ParameterValueType = obj.ParameterValueType;
+                        pa_rm.ActiveStatus = obj.ActiveStatus;
+                        pa_rm.ModifiedBy = obj.UserID;
+                        pa_rm.ModifiedOn = DateTime.Now;
+                        pa_rm.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Parameter Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        
+        #endregion Parameters
+    }
+}

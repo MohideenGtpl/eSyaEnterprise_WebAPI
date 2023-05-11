@@ -1,0 +1,20 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ITaxStructureRepository
+    {
+        List<DO_TaxStructure> GetTaxStructureByISDCode(int ISDCode);
+
+        List<DO_TaxStructure> GetTaxStructureByTaxCode(int ISDCode, int taxCode);
+
+        DO_ReturnParameter InsertIntoTaxStructure(DO_TaxStructure obj);
+
+        DO_ReturnParameter UpdateTaxStructure(DO_TaxStructure obj);
+
+        List<DO_TaxStructure> GetTaxCodeByISDCodes(int ISDCode);
+    }
+}

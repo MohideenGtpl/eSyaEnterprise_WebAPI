@@ -1,0 +1,30 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IDocumentControlRepository
+    {
+        #region Document Control
+        List<DO_DocumentControl> GetDocumentControls();
+
+        DO_ReturnParameter InsertDocumentControl(DO_DocumentControl control);
+
+        DO_ReturnParameter UpdateDocumentControl(DO_DocumentControl control);
+        #endregion Document Control
+
+        #region Calendar Defination
+        DO_ReturnParameter InsertCalendarHeaderAndDetails(DO_CalendarDefinition calendarheadar);
+
+        DO_ReturnParameter UpdateCalendardetails(DO_CalendarDetails caldetails);
+
+        List<DO_CalendarDetails> GetCalendarDetailsbyBusinessKeyAndFinancialYear(int BusinessKey, decimal FinancialYear);
+       
+        List<DO_CalendarDefinition> GetCalendarHeaders();
+
+        List<DO_CalendarDetails> GetFinancialYearbyBusinessKey(int Businesskey);
+        #endregion Calendar Defination
+    }
+}

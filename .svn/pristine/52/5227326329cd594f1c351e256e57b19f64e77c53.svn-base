@@ -1,0 +1,209 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+   public class MobilePannelRepository:IMobilePannelRepository
+    {
+        public async Task<List<DO_MobilePannel>> GetMobilePannelListbyTemplateType(string LanguageCode, string TemplateType)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+
+                    return await db.GtMapane.Where(x => x.TemplateType.ToUpper().Trim() == TemplateType.ToUpper().Trim() &&x.LanguageCode.ToUpper().Trim()== LanguageCode.ToUpper().Trim())
+                          .Select(t => new DO_MobilePannel
+                          {
+                              TemplateType = t.TemplateType,
+                              LanguageCode = t.LanguageCode,
+                              TemplateId = t.TemplateId,
+                              DisplayType = t.DisplayType,
+                              ImageUrl = t.ImageUrl,
+                              VideoUrl = t.VideoUrl,
+                              DisplayName = t.DisplayName,
+                              TemplateDesc = t.TemplateDesc,
+                              Faqs = t.Faqs,
+                              FaqsAnswer = t.FaqsAnswer,
+                              DisplayOrder = t.DisplayOrder,
+                              ActiveStatus = t.ActiveStatus,
+                          }).ToListAsync();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoMobilePannel(DO_MobilePannel obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        int maxtemp = db.GtMapane.Where(x => x.TemplateType.ToUpper().Trim() == obj.TemplateType.ToUpper().Trim() && x.LanguageCode.ToUpper().Trim() == obj.LanguageCode.ToUpper().Trim()).Select(c => c.TemplateId).DefaultIfEmpty().Max();
+                        int maxtempval = maxtemp + 1;
+                        var obj_mpannel = new GtMapane
+                        {
+                            TemplateType =obj.TemplateType,
+                            LanguageCode=obj.LanguageCode,
+                            TemplateId= maxtempval,
+                            DisplayType=obj.DisplayType,
+                            ImageUrl=obj.ImageUrl,
+                            DisplayName=obj.DisplayName,
+                            VideoUrl=obj.VideoUrl,
+                            TemplateDesc=obj.TemplateDesc,
+                            Faqs=obj.Faqs,
+                            FaqsAnswer=obj.FaqsAnswer,
+                            DisplayOrder=obj.DisplayOrder,
+                            ActiveStatus=obj.ActiveStatus,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID,
+
+                        };
+                        db.GtMapane.Add(obj_mpannel);
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Mobile Pannel Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateMobilePannel(DO_MobilePannel obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtMapane obj_mpannel = db.GtMapane.Where(x => x.TemplateType.ToUpper().Trim() == obj.TemplateType.ToUpper().Trim() && x.LanguageCode.ToUpper().Trim() == obj.LanguageCode.ToUpper().Trim() && x.TemplateId== obj.TemplateId).FirstOrDefault();
+                        if (obj_mpannel == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Mobile Pannel is not exist." };
+                        }
+                        obj_mpannel.DisplayType = obj.DisplayType;
+                        obj_mpannel.ImageUrl = obj.ImageUrl;
+                        obj_mpannel.DisplayName = obj.DisplayName;
+                        obj_mpannel.VideoUrl = obj.VideoUrl;
+                        obj_mpannel.TemplateDesc = obj.TemplateDesc;
+                        obj_mpannel.Faqs = obj.Faqs;
+                        obj_mpannel.FaqsAnswer = obj.FaqsAnswer;
+                        obj_mpannel.DisplayOrder = obj.DisplayOrder;
+                        obj_mpannel.ActiveStatus = obj.ActiveStatus;
+                        obj_mpannel.ModifiedBy = obj.UserID;
+                        obj_mpannel.ModifiedOn = System.DateTime.Now;
+                        obj_mpannel.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Mobile Pannel Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> ActiveOrDeActiveMobilePannel(bool status, int TemplateId, string TemplateType, string LanguageCode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtMapane obj_mpannel = db.GtMapane.Where(x => x.TemplateType.ToUpper().Trim() == TemplateType.ToUpper().Trim() && x.LanguageCode.ToUpper().Trim() == LanguageCode.ToUpper().Trim()&& x.TemplateId == TemplateId).FirstOrDefault();
+                        if (obj_mpannel == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Template is not exist" };
+                        }
+
+                        obj_mpannel.ActiveStatus = status;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        if (status == true)
+                            return new DO_ReturnParameter() { Status = true, Message = "Mobile Pannel Activated Successfully." };
+                        else
+                            return new DO_ReturnParameter() { Status = true, Message = "Mobile Pannel De Activated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_MobilePannel> GetMobilePannelbyTemplateType(string LanguageCode, string TemplateType,int TemplateId)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+
+                    return await db.GtMapane.Where(x =>x.TemplateId==TemplateId && x.TemplateType.ToUpper().Trim() == TemplateType.ToUpper().Trim() && x.LanguageCode.ToUpper().Trim() == LanguageCode.ToUpper().Trim())
+                          .Select(t => new DO_MobilePannel
+                          {
+                              TemplateType = t.TemplateType,
+                              LanguageCode = t.LanguageCode,
+                              TemplateId = t.TemplateId,
+                              DisplayType = t.DisplayType,
+                              ImageUrl = t.ImageUrl,
+                              VideoUrl = t.VideoUrl,
+                              DisplayName = t.DisplayName,
+                              TemplateDesc = t.TemplateDesc,
+                              Faqs = t.Faqs,
+                              FaqsAnswer = t.FaqsAnswer,
+                              DisplayOrder = t.DisplayOrder,
+                              ActiveStatus = t.ActiveStatus,
+                          }).FirstOrDefaultAsync();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

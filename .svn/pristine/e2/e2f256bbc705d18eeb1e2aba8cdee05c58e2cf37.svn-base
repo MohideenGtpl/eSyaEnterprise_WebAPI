@@ -1,0 +1,31 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+    public interface ISMSEngineRepository
+    {
+        #region SMS Variable
+
+        Task<List<DO_SMSVariable>> GetSMSVariableInformation();
+
+        Task<DO_ReturnParameter> InsertIntoSMSVariable(DO_SMSVariable obj);
+
+        Task<DO_ReturnParameter> UpdateSMSVariable(DO_SMSVariable obj);
+
+        #endregion SMS Variable
+
+        #region SMS Information
+
+        Task<List<DO_SMSHeader>> GetSMSHeaderInformationByFormId(int formId);
+
+        Task<DO_ReturnParameter> InsertIntoSMSHeader(DO_SMSHeader obj);
+
+        Task<DO_ReturnParameter> UpdateSMSHeader(DO_SMSHeader obj);
+
+        #endregion SMS Information
+    }
+}

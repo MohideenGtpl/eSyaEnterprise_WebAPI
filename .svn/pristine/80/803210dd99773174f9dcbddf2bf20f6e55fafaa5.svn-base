@@ -1,0 +1,52 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IConfigureMenuRepository
+    {
+        #region MainMenu
+        DO_MainMenu GetMainMenuById(int mainMenuId);
+
+        DO_ReturnParameter InsertIntoMainMenu(DO_MainMenu obj);
+
+        DO_ReturnParameter UpdateMainMenuIndex(int mainMenuId, bool isMoveUp, bool isMoveDown);
+
+        DO_ReturnParameter DeleteMainMenu(int mainMenuId);
+        #endregion MainMenu
+
+
+        #region SubMenu
+        DO_SubMenu GetSubMenuById(int menuItemId);
+
+        DO_ReturnParameter InsertIntoSubMenu(DO_SubMenu obj);
+
+        DO_ReturnParameter UpdateSubMenusIndex(int menuItemId, bool isMoveUp, bool isMoveDown);
+
+        DO_ReturnParameter DeleteSubMenu(int menuItemId);
+
+        #endregion SubMenu
+
+
+        #region Forms
+
+        DO_FormMenu GetFormDetailById(int mainMenuId, int menuItemId, int formId);
+
+
+        DO_ReturnParameter InsertIntoFormMenu(DO_FormMenu obj);
+
+        DO_ReturnParameter UpdateFormsIndex(int mainMenuId, int menuItemId, int formID, bool isMoveUp, bool isMoveDown);
+
+
+        DO_ReturnParameter DeleteFormMenu(int mainMenuId, int menuItemId, int formId);
+
+        #endregion Forms
+
+        DO_ConfigureMenu GetConfigureMenuMaster();
+
+
+        List<DO_MainMenu> GetConfigureMenulist();
+    }
+}

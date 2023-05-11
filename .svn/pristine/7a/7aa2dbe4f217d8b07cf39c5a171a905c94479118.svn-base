@@ -1,0 +1,16 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ITaxRuleRepository
+    {
+        List<DO_TaxRule> GetTaxRuleByISDandTaxCode(int ISDCode, int TaxCode);
+
+        DO_ReturnParameter InsertIntoTaxRule(DO_TaxRule obj);
+
+        DO_ReturnParameter UpdateTaxRule(DO_TaxRule obj);
+    }
+}

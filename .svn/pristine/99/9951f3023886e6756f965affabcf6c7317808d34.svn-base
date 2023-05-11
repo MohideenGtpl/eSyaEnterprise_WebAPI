@@ -1,0 +1,66 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ApplicationCodesController : ControllerBase
+    {
+        private readonly IApplicationCodesRepository _ApplicationCodesRepository;
+
+        public ApplicationCodesController(IApplicationCodesRepository applicationCodesRepository)
+        {
+            _ApplicationCodesRepository = applicationCodesRepository;
+        }
+        /// <summary>
+        /// Get Application Codes.
+        /// UI Reffered - ApplicationCodes, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetApplicationCodesAsync()
+        {
+            var ac = await _ApplicationCodesRepository.GetApplicationCodes();
+            return Ok(ac);
+        }
+
+        /// <summary>
+        /// Get Application Codes for specific Code Type.
+        /// UI Reffered - ApplicationCodes,AssetGroup
+        /// </summary>
+        /// <param name="codeType"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetApplicationCodesByCodeType(int codeType)
+        {
+            var ac = await _ApplicationCodesRepository.GetApplicationCodesByCodeType(codeType);
+           return Ok(ac);
+        }
+
+        /// <summary>
+        /// Insert into Application Codes Table
+        /// UI Reffered - ApplicationCode,
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoApplicationCodes(DO_ApplicationCodes obj)
+        {
+           var msg = await _ApplicationCodesRepository.InsertIntoApplicationCodes(obj);
+           return Ok(msg);
+        }
+
+        /// <summary>
+        /// Update into Application Codes Table
+        /// UI Reffered - ApplicationCode,
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateApplicationCodes(DO_ApplicationCodes obj)
+        {
+            var msg = await _ApplicationCodesRepository.UpdateApplicationCodes(obj);
+            return Ok(msg);
+        }
+    }
+}

@@ -1,0 +1,57 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class StoreMasterController : ControllerBase
+    {
+        private readonly IStoreMasterRepository _StoreMasterRepository;
+        public StoreMasterController(IStoreMasterRepository StoreMasterRepository)
+        {
+            _StoreMasterRepository = StoreMasterRepository;
+        }
+        /// <summary>
+        /// Getting  Store Codes List.
+        /// UI Reffered - Store Codes Grid
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetStoreCodes()
+        {
+            var store_master =await _StoreMasterRepository.GetStoreCodes();
+            return Ok(store_master);
+        }
+        /// <summary>
+        /// Insert Or Update Store Codes .
+        /// UI Reffered -Store Codes
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateStoreCodes(DO_StoreMaster storecodes)
+        {
+            var msg =await _StoreMasterRepository.InsertOrUpdateStoreCodes(storecodes);
+            return Ok(msg);
+
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteStoreCode(int Storecode)
+        {
+            var msg =await _StoreMasterRepository.DeleteStoreCode(Storecode);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Getting  Store Codes for dropdown.
+        /// UI Reffered - Business Stores
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetActiveStoreCodes()
+        {
+            var astore_master =await _StoreMasterRepository.GetActiveStoreCodes();
+            return Ok(astore_master);
+        }
+    }
+}

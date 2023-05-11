@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DO;
+
+namespace eSyaConfigSetup.IF
+{
+    public interface IDepartmentCodesRepository
+    {
+        Task<DO_ReturnParameter> InsertIntoDepartmentCodes(DO_DepartmentCodes obj);
+        Task<DO_ReturnParameter> UpdateDepartmentCodes(DO_DepartmentCodes obj);
+        Task<List<DO_DepartmentCodes>> GetDepartmentCodes();
+    }
+}

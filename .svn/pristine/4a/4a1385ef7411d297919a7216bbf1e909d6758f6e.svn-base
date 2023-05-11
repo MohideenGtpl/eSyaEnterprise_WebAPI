@@ -1,0 +1,26 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ILocalizationMasterRepository
+    {
+        #region Localization Master
+        List<DO_LocalizationMaster> GetLocalizationTableMaster();
+
+        DO_ReturnParameter InsertOrUpdateLocalizationTableMaster(DO_LocalizationMaster obj);
+
+        #endregion
+
+        #region Localization Language Mapping
+        List<DO_LocalizationMaster> GetLocalizationMaster();
+
+        DO_ReturnParameter InsertOrUpdateLocalizationLanguageMapping(List<DO_LocalizationLanguageMapping> obj);
+
+        List<DO_LocalizationLanguageMapping> GetLocalizationLanguageMapping(string languageCode, int tableCode);
+
+        #endregion
+    }
+}

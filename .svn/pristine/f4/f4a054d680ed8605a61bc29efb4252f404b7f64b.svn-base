@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace eSyaConfigSetup.DL.Entities
+{
+    public partial class GtEcbsln
+    {
+        public GtEcbsln()
+        {
+            GtEccldt = new HashSet<GtEccldt>();
+            GtEcgrrh = new HashSet<GtEcgrrh>();
+        }
+
+        public int BusinessId { get; set; }
+        public int SegmentId { get; set; }
+        public int LocationId { get; set; }
+        public string LocationCode { get; set; }
+        public string LocationDescription { get; set; }
+        public string BusinessName { get; set; }
+        public int BusinessKey { get; set; }
+        public byte[] EBusinessKey { get; set; }
+        public bool ActiveStatus { get; set; }
+        public string FormId { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string CreatedTerminal { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public string ModifiedTerminal { get; set; }
+
+        public virtual GtEcbssg GtEcbssg { get; set; }
+        public virtual ICollection<GtEccldt> GtEccldt { get; set; }
+        public virtual ICollection<GtEcgrrh> GtEcgrrh { get; set; }
+    }
+}

@@ -1,0 +1,21 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+    public interface IParametersRepository
+    {
+        #region eSya Parameter
+        
+        Task<List<DO_Parameters>> GetParametersInformationByParameterType(int parameterType);
+
+        Task<DO_ReturnParameter> InsertIntoParameters(DO_Parameters obj);
+
+        Task<DO_ReturnParameter> UpdateParameters(DO_Parameters obj);
+
+        #endregion eSya Parameter
+    }
+}

@@ -1,0 +1,42 @@
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.deps.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.runtimeconfig.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.runtimeconfig.dev.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csprojAssemblyReference.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csproj.CoreCompileInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorAssemblyInfo.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorAssemblyInfo.cs
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.AssemblyInfoInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.AssemblyInfo.cs
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorTargetAssemblyInfo.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csproj.CopyComplete
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.deps.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.runtimeconfig.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.runtimeconfig.dev.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DL.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DL.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\bin\Release\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csprojAssemblyReference.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csproj.CoreCompileInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorAssemblyInfo.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorAssemblyInfo.cs
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.AssemblyInfoInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.AssemblyInfo.cs
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.RazorTargetAssemblyInfo.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.csproj.CopyComplete
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaEnterprise_WebAPI\obj\Release\netcoreapp2.2\eSyaEnterprise_WebAPI.pdb

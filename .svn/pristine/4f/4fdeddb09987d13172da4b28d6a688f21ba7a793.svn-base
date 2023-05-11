@@ -1,0 +1,28 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+namespace eSyaConfigSetup.IF
+{
+    public interface ITemplateCreatorRepository
+    {
+        #region Template Creator
+        Task<List<DO_TemplateCreator>> GetAllTemplates();
+
+        Task<DO_ReturnParameter> InsertIntoTemplateCreator(DO_TemplateCreator obj);
+
+        Task<DO_ReturnParameter> UpdateTemplateCreator(DO_TemplateCreator obj);
+
+        Task<DO_ReturnParameter> ActiveOrDeActiveTemplateCreator(bool status, int TemplateId);
+        #endregion Template Creator
+
+        #region Examination
+        Task<List<DO_Examination>> GetExaminationsByTemplateId(int TemplateId);
+
+        Task<DO_ReturnParameter> InsertIntoExamination(DO_Examination obj);
+
+        Task<DO_ReturnParameter> UpdateExamination(DO_Examination obj);
+        #endregion Examination
+    }
+}

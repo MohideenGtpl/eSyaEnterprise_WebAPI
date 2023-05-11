@@ -1,0 +1,24 @@
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.deps.json
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csprojAssemblyReference.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csproj.CoreCompileInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.AssemblyInfoInputs.cache
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.AssemblyInfo.cs
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csproj.CopyComplete
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Enterprise\SVN Soln\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.deps.json
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\bin\Debug\netcoreapp2.2\eSyaConfigSetup.DO.pdb
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csprojAssemblyReference.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csproj.CoreCompileInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.AssemblyInfoInputs.cache
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.AssemblyInfo.cs
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.csproj.CopyComplete
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.dll
+D:\eSya Project\Solution\Project_eSyaWebAPI\eSyaEnterprise_WebAPI\trunk\eSyaConfigSetup\eSyaConfigSetup.IF\obj\Debug\netcoreapp2.2\eSyaConfigSetup.IF.pdb

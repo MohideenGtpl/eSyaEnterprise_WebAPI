@@ -1,0 +1,1119 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace eSyaConfigSetup.DL.Entities
+{
+    public partial class eSyaEnterprise : DbContext
+    {
+        public static string _connString = "";
+        public eSyaEnterprise()
+        {
+        }
+
+        public eSyaEnterprise(DbContextOptions<eSyaEnterprise> options)
+            : base(options)
+        {
+        }
+
+        public virtual DbSet<GtBefmac> GtBefmac { get; set; }
+        public virtual DbSet<GtBelang> GtBelang { get; set; }
+        public virtual DbSet<GtCmapct> GtCmapct { get; set; }
+        public virtual DbSet<GtCmbset> GtCmbset { get; set; }
+        public virtual DbSet<GtCmbslo> GtCmbslo { get; set; }
+        public virtual DbSet<GtCmbssc> GtCmbssc { get; set; }
+        public virtual DbSet<GtCmbssd> GtCmbssd { get; set; }
+        public virtual DbSet<GtCmbssg> GtCmbssg { get; set; }
+        public virtual DbSet<GtCmclco> GtCmclco { get; set; }
+        public virtual DbSet<GtCmcnms> GtCmcnms { get; set; }
+        public virtual DbSet<GtCmcnst> GtCmcnst { get; set; }
+        public virtual DbSet<GtCmcnti> GtCmcnti { get; set; }
+        public virtual DbSet<GtCmcntx> GtCmcntx { get; set; }
+        public virtual DbSet<GtCmcudi> GtCmcudi { get; set; }
+        public virtual DbSet<GtCmcums> GtCmcums { get; set; }
+        public virtual DbSet<GtCmdccn> GtCmdccn { get; set; }
+        public virtual DbSet<GtCmescl> GtCmescl { get; set; }
+        public virtual DbSet<GtCmfmal> GtCmfmal { get; set; }
+        public virtual DbSet<GtCmfmfd> GtCmfmfd { get; set; }
+        public virtual DbSet<GtCmfmfn> GtCmfmfn { get; set; }
+        public virtual DbSet<GtCmfmnm> GtCmfmnm { get; set; }
+        public virtual DbSet<GtCmgrhd> GtCmgrhd { get; set; }
+        public virtual DbSet<GtCmltms> GtCmltms { get; set; }
+        public virtual DbSet<GtCmlttl> GtCmlttl { get; set; }
+        public virtual DbSet<GtCmmamo> GtCmmamo { get; set; }
+        public virtual DbSet<GtCmprms> GtCmprms { get; set; }
+        public virtual DbSet<GtCmprru> GtCmprru { get; set; }
+        public virtual DbSet<GtCmsbmu> GtCmsbmu { get; set; }
+        public virtual DbSet<GtCmtxdt> GtCmtxdt { get; set; }
+        public virtual DbSet<GtEaapcd> GtEaapcd { get; set; }
+        public virtual DbSet<GtEausgr> GtEausgr { get; set; }
+        public virtual DbSet<GtImstms> GtImstms { get; set; }
+        public virtual DbSet<GtInmmir> GtInmmir { get; set; }
+        public virtual DbSet<GtInunom> GtInunom { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer(_connString);
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity<GtBefmac>(entity =>
+            {
+                entity.HasKey(e => e.ActionId);
+
+                entity.ToTable("GT_BEFMAC");
+
+                entity.Property(e => e.ActionId)
+                    .HasColumnName("ActionID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.ActionDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtBelang>(entity =>
+            {
+                entity.HasKey(e => e.LanguageCode);
+
+                entity.ToTable("GT_BELANG");
+
+                entity.Property(e => e.LanguageCode)
+                    .HasMaxLength(6)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.LanguageDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmapct>(entity =>
+            {
+                entity.HasKey(e => e.CodeType);
+
+                entity.ToTable("GT_CMAPCT");
+
+                entity.Property(e => e.CodeType).ValueGeneratedNever();
+
+                entity.Property(e => e.CodeTyepDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CodeTypeControl)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmbset>(entity =>
+            {
+                entity.HasKey(e => e.BusinessId);
+
+                entity.ToTable("GT_CMBSET");
+
+                entity.Property(e => e.BusinessId)
+                    .HasColumnName("BusinessID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.BusinessDesc)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmbslo>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessId, e.SegmentId, e.LocationId });
+
+                entity.ToTable("GT_CMBSLO");
+
+                entity.HasIndex(e => e.BusinessKey)
+                    .HasName("IX_GT_CMBSLO")
+                    .IsUnique();
+
+                entity.Property(e => e.BusinessId).HasColumnName("BusinessID");
+
+                entity.Property(e => e.SegmentId).HasColumnName("SegmentID");
+
+                entity.Property(e => e.LocationId).HasColumnName("LocationID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.LocationCode)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.LocationDescription)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmbssc>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.StoreCode });
+
+                entity.ToTable("GT_CMBSSC");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmbssd>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.StatutoryCode });
+
+                entity.ToTable("GT_CMBSSD");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.StatutoryDetail)
+                    .IsRequired()
+                    .HasMaxLength(15);
+            });
+
+            modelBuilder.Entity<GtCmbssg>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessId, e.SegmentId });
+
+                entity.ToTable("GT_CMBSSG");
+
+                entity.Property(e => e.BusinessId).HasColumnName("BusinessID");
+
+                entity.Property(e => e.SegmentId).HasColumnName("SegmentID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CurrencyCode)
+                    .HasMaxLength(4)
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Isdcode)
+                    .HasColumnName("ISDCode")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.SegmentDesc)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.TaxIdentification).HasDefaultValueSql("((0))");
+            });
+
+            modelBuilder.Entity<GtCmclco>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.FinancialYear, e.MonthId });
+
+                entity.ToTable("GT_CMCLCO");
+
+                entity.Property(e => e.FinancialYear).HasColumnType("numeric(4, 0)");
+
+                entity.Property(e => e.MonthId).HasColumnName("MonthID");
+
+                entity.Property(e => e.ActiveStatus)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.BudgetMonth)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.MonthFreezeHis).HasColumnName("MonthFreezeHIS");
+
+                entity.Property(e => e.MonthFreezeHr).HasColumnName("MonthFreezeHR");
+
+                entity.Property(e => e.PatientIdgen).HasColumnName("PatientIDGen");
+
+                entity.Property(e => e.PatientIdserial)
+                    .IsRequired()
+                    .HasColumnName("PatientIDSerial")
+                    .HasMaxLength(1);
+            });
+
+            modelBuilder.Entity<GtCmcnms>(entity =>
+            {
+                entity.HasKey(e => e.Isdcode);
+
+                entity.ToTable("GT_CMCNMS");
+
+                entity.Property(e => e.Isdcode)
+                    .HasColumnName("ISDCode")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.CountryFlag)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CountryName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CurrencyCode)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsPinapplicable).HasColumnName("IsPINApplicable");
+
+                entity.Property(e => e.IsPoboxApplicable).HasColumnName("IsPOBoxApplicable");
+
+                entity.Property(e => e.MobileNumberPattern)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Nationality).HasMaxLength(50);
+
+                entity.Property(e => e.PincodePattern)
+                    .HasColumnName("PINcodePattern")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PoboxPattern)
+                    .HasColumnName("POBoxPattern")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Uidlabel)
+                    .HasColumnName("UIDLabel")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Uidpattern)
+                    .HasColumnName("UIDPattern")
+                    .HasMaxLength(25);
+            });
+
+            modelBuilder.Entity<GtCmcnst>(entity =>
+            {
+                entity.HasKey(e => new { e.Isdcode, e.StatutoryCode });
+
+                entity.ToTable("GT_CMCNST");
+
+                entity.Property(e => e.Isdcode).HasColumnName("ISDCode");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.StatPattern)
+                    .IsRequired()
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.StatShortCode)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StatutoryDescription)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmcnti>(entity =>
+            {
+                entity.HasKey(e => new { e.Isdcode, e.TaxCode, e.TaxIdentificationId });
+
+                entity.ToTable("GT_CMCNTI");
+
+                entity.Property(e => e.Isdcode).HasColumnName("ISDCode");
+
+                entity.Property(e => e.TaxIdentificationId).HasColumnName("TaxIdentificationID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.TaxIdentificationDesc)
+                    .IsRequired()
+                    .HasMaxLength(25);
+            });
+
+            modelBuilder.Entity<GtCmcntx>(entity =>
+            {
+                entity.HasKey(e => new { e.Isdcode, e.TaxCode });
+
+                entity.ToTable("GT_CMCNTX");
+
+                entity.Property(e => e.Isdcode).HasColumnName("ISDCode");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.SlabOrPerc)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxDescription)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TaxShortCode)
+                    .IsRequired()
+                    .HasMaxLength(10);
+            });
+
+            modelBuilder.Entity<GtCmcudi>(entity =>
+            {
+                entity.HasKey(e => new { e.CurrencyCode, e.Denomination });
+
+                entity.ToTable("GT_CMCUDI");
+
+                entity.Property(e => e.CurrencyCode).HasMaxLength(4);
+
+                entity.Property(e => e.Denomination).HasColumnType("numeric(10, 0)");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EffectiveDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmcums>(entity =>
+            {
+                entity.HasKey(e => e.CurrencyCode);
+
+                entity.ToTable("GT_CMCUMS");
+
+                entity.Property(e => e.CurrencyCode)
+                    .HasMaxLength(4)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CurrencyName)
+                    .IsRequired()
+                    .HasMaxLength(25);
+
+                entity.Property(e => e.DecimalPlaces).HasColumnType("decimal(2, 0)");
+
+                entity.Property(e => e.DecimalPortionWord).HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Symbol)
+                    .IsRequired()
+                    .HasMaxLength(10);
+            });
+
+            modelBuilder.Entity<GtCmdccn>(entity =>
+            {
+                entity.HasKey(e => new { e.FormId, e.DocumentId });
+
+                entity.ToTable("GT_CMDCCN");
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.DocumentId).HasColumnName("DocumentID");
+
+                entity.Property(e => e.ActiveStatus)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DocCatgDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DocCodeDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DocumentCategory)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.DocumentCode)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.DocumentType)
+                    .IsRequired()
+                    .HasMaxLength(1);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmescl>(entity =>
+            {
+                entity.HasKey(e => e.FinancialYear);
+
+                entity.ToTable("GT_CMESCL");
+
+                entity.Property(e => e.FinancialYear).HasColumnType("numeric(4, 0)");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.TillDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<GtCmfmal>(entity =>
+            {
+                entity.HasKey(e => new { e.FormId, e.ActionId });
+
+                entity.ToTable("GT_CMFMAL");
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.ActionId).HasColumnName("ActionID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmfmfd>(entity =>
+            {
+                entity.HasKey(e => e.FormId);
+
+                entity.ToTable("GT_CMFMFD");
+
+                entity.Property(e => e.FormId)
+                    .HasColumnName("FormID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.ControllerName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ToolTip).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<GtCmfmfn>(entity =>
+            {
+                entity.HasKey(e => new { e.FormId, e.FormIntId });
+
+                entity.ToTable("GT_CMFMFN");
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.FormIntId)
+                    .HasColumnName("FormIntID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormDescription)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.NavigateUrl)
+                    .IsRequired()
+                    .HasColumnName("NavigateURL")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<GtCmfmnm>(entity =>
+            {
+                entity.HasKey(e => new { e.FormId, e.MainMenuId, e.MenuItemId });
+
+                entity.ToTable("GT_CMFMNM");
+
+                entity.Property(e => e.FormId).HasColumnName("FormID");
+
+                entity.Property(e => e.MainMenuId).HasColumnName("MainMenuID");
+
+                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormNameClient)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.MainMenu)
+                    .WithMany(p => p.GtCmfmnm)
+                    .HasForeignKey(d => d.MainMenuId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_CMFMNM_GT_CMMAMO");
+            });
+
+            modelBuilder.Entity<GtCmgrhd>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.ReportHeader });
+
+                entity.ToTable("GT_CMGRHD");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ReportHeaderDesc)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ReportHeaderTemplate).IsRequired();
+            });
+
+            modelBuilder.Entity<GtCmltms>(entity =>
+            {
+                entity.HasKey(e => e.TableCode);
+
+                entity.ToTable("GT_CMLTMS");
+
+                entity.Property(e => e.TableCode).ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.SchemaName)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TableName)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<GtCmlttl>(entity =>
+            {
+                entity.HasKey(e => new { e.LanguageCode, e.TableCode, e.TablePrimaryKeyId });
+
+                entity.ToTable("GT_CMLTTL");
+
+                entity.Property(e => e.LanguageCode)
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TablePrimaryKeyId).HasColumnName("TablePrimaryKeyID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FieldDescLanguage)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmmamo>(entity =>
+            {
+                entity.HasKey(e => e.MainMenuId);
+
+                entity.ToTable("GT_CMMAMO");
+
+                entity.Property(e => e.MainMenuId)
+                    .HasColumnName("MainMenuID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ImageUrl)
+                    .HasColumnName("ImageURL")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MainMenu)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtCmprms>(entity =>
+            {
+                entity.HasKey(e => e.ProcessId);
+
+                entity.ToTable("GT_CMPRMS");
+
+                entity.Property(e => e.ProcessId)
+                    .HasColumnName("ProcessID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ProcessControl)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProcessDesc)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<GtCmprru>(entity =>
+            {
+                entity.HasKey(e => new { e.RuleId, e.ProcessId });
+
+                entity.ToTable("GT_CMPRRU");
+
+                entity.Property(e => e.RuleId).HasColumnName("RuleID");
+
+                entity.Property(e => e.ProcessId).HasColumnName("ProcessID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.RuleDesc)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<GtCmsbmu>(entity =>
+            {
+                entity.HasKey(e => new { e.MenuItemId, e.MainMenuId });
+
+                entity.ToTable("GT_CMSBMU");
+
+                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
+
+                entity.Property(e => e.MainMenuId).HasColumnName("MainMenuID");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ImageUrl)
+                    .HasColumnName("ImageURL")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MenuItemName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ParentId).HasColumnName("ParentID");
+            });
+
+            modelBuilder.Entity<GtCmtxdt>(entity =>
+            {
+                entity.HasKey(e => new { e.Isdcode, e.TaxCode, e.SerialNumber });
+
+                entity.ToTable("GT_CMTXDT");
+
+                entity.Property(e => e.Isdcode).HasColumnName("ISDCode");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.SlabOrPerc)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SplitCategoryPerc).HasColumnType("numeric(5, 2)");
+
+                entity.Property(e => e.TaxDescription)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TaxShortCode)
+                    .IsRequired()
+                    .HasMaxLength(10);
+            });
+
+            modelBuilder.Entity<GtEaapcd>(entity =>
+            {
+                entity.HasKey(e => new { e.ApplicationCode, e.CodeType });
+
+                entity.ToTable("GT_EAAPCD");
+
+                entity.Property(e => e.CodeDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.CodeTypeNavigation)
+                    .WithMany(p => p.GtEaapcd)
+                    .HasForeignKey(d => d.CodeType)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fkCodeType");
+            });
+
+            modelBuilder.Entity<GtEausgr>(entity =>
+            {
+                entity.HasKey(e => new { e.UserGroup, e.UserType, e.MenuKey });
+
+                entity.ToTable("GT_EAUSGR");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtImstms>(entity =>
+            {
+                entity.HasKey(e => new { e.StoreType, e.StoreCode });
+
+                entity.ToTable("GT_IMSTMS");
+
+                entity.Property(e => e.StoreType)
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.StoreDesc)
+                    .IsRequired()
+                    .HasMaxLength(25);
+            });
+
+            modelBuilder.Entity<GtInmmir>(entity =>
+            {
+                entity.HasKey(e => e.InventoryRuleId);
+
+                entity.ToTable("GT_INMMIR");
+
+                entity.Property(e => e.InventoryRuleId)
+                    .HasColumnName("InventoryRuleID")
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.ApplyToSrn).HasColumnName("ApplyToSRN");
+
+                entity.Property(e => e.InventoryRuleDesc)
+                    .IsRequired()
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<GtInunom>(entity =>
+            {
+                entity.HasKey(e => e.UnitOfMeasure);
+
+                entity.ToTable("GT_INUNOM");
+
+                entity.Property(e => e.UnitOfMeasure).ValueGeneratedNever();
+
+                entity.Property(e => e.ConversionFactor).HasColumnType("numeric(12, 5)");
+
+                entity.Property(e => e.Uompdesc)
+                    .IsRequired()
+                    .HasColumnName("UOMPDesc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Uompurchase)
+                    .IsRequired()
+                    .HasColumnName("UOMPurchase")
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Uomsdesc)
+                    .IsRequired()
+                    .HasColumnName("UOMSDesc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Uomstock)
+                    .IsRequired()
+                    .HasColumnName("UOMStock")
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+            });
+        }
+    }
+}

@@ -1,0 +1,420 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class CountryRepository:ICountryRepository
+    {
+        #region Country Codes
+        public async Task<List<DO_CountryCodes>> GetAllCountryCodesAsync()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmcnms.Join(db.GtCmcums,
+                         x => x.CurrencyCode,
+                         y => y.CurrencyCode,
+                        (x, y) => new DO_CountryCodes
+                        
+                        {
+                           Isdcode= x.Isdcode,
+                           CountryCode= x.CountryCode,
+                           CountryName= x.CountryName,
+                           CountryFlag= x.CountryFlag,
+                           CurrencyCode= x.CurrencyCode,
+                           MobileNumberPattern= x.MobileNumberPattern,
+                           Uidlabel = x.Uidlabel,
+                           Uidpattern = x.Uidpattern,
+                           Nationality = x.Nationality,
+                           IsPoboxApplicable = x.IsPoboxApplicable,
+                           PoboxPattern = x.PoboxPattern,
+                           IsPinapplicable = x.IsPinapplicable,
+                           PincodePattern = x.PincodePattern,
+                           ActiveStatus = x.ActiveStatus,
+                           CurrencyName=y.CurrencyName
+                        }).ToListAsync();
+                    List<DO_CountryCodes> countrycodes = new List<DO_CountryCodes>();
+                    foreach (var item in await result)
+                    {
+                        DO_CountryCodes country = new DO_CountryCodes();
+                        country.Isdcode = item.Isdcode;
+                        country.CountryCode = item.CountryCode;
+                        country.CountryName = item.CountryName;
+                        country.CountryFlag = "/" + item.CountryFlag;
+                        country.CurrencyCode = item.CurrencyCode;
+                        country.MobileNumberPattern = item.MobileNumberPattern;
+                        country.Uidlabel = item.Uidlabel;
+                        country.Uidpattern = item.Uidpattern;
+                        country.Nationality = item.Nationality;
+                        country.IsPoboxApplicable = item.IsPoboxApplicable;
+                        country.PoboxPattern = item.PoboxPattern;
+                        country.IsPinapplicable = item.IsPinapplicable;
+                        country.PincodePattern = item.PincodePattern;
+                        country.ActiveStatus = item.ActiveStatus;
+                        country.CurrencyName = item.CurrencyName;
+                        countrycodes.Add(country);
+                    }
+                  
+                    return countrycodes;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoCountryCode(DO_CountryCodes countrycode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_IsdCodeExist = db.GtCmcnms.Any(c => c.Isdcode == countrycode.Isdcode);
+                        if (is_IsdCodeExist)
+                        {
+                            return  new DO_ReturnParameter() { Status = false, Message = "ISD Code already exist." };
+                        }
+
+                        var is_CountryCodeExist = db.GtCmcnms.Where(c => c.CountryCode.Trim().ToUpper().Replace(" ", "") == countrycode.CountryCode.Trim().ToUpper().Replace(" ", "")).Count();
+
+                        if (is_CountryCodeExist > 0 )
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Country Code already exist." };
+                        }
+                        var is_CountryNameExist = db.GtCmcnms.Where(c => c.CountryName.Trim().ToUpper().Replace(" ", "") == countrycode.CountryName.Trim().ToUpper().Replace(" ", "")).Count();
+
+                        if (is_CountryNameExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Country Name already exist." };
+                        }
+                        var ctr = new GtCmcnms
+                        {
+                            Isdcode= countrycode.Isdcode,
+                            CountryCode= countrycode.CountryCode,
+                            CountryName= countrycode.CountryName,
+                            CountryFlag= countrycode.CountryFlag,
+                            CurrencyCode= countrycode.CurrencyCode,
+                            MobileNumberPattern= countrycode.MobileNumberPattern,
+                            Uidlabel= countrycode.Uidlabel,
+                            Uidpattern= countrycode.Uidpattern,
+                            Nationality= countrycode.Nationality,
+                            IsPoboxApplicable= countrycode.IsPoboxApplicable,
+                            PoboxPattern= countrycode.PoboxPattern,
+                            IsPinapplicable= countrycode.IsPinapplicable,
+                            PincodePattern= countrycode.PincodePattern,
+                            ActiveStatus= countrycode.ActiveStatus,
+                            FormId= countrycode.FormId,
+                            CreatedBy = countrycode.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = countrycode.TerminalID
+                        };
+                        db.GtCmcnms.Add(ctr);
+                       await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return  new DO_ReturnParameter() { Status = true, Message = "Country Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateCountryCode(DO_CountryCodes countrycode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_CountryCodeExist = db.GtCmcnms.Where(c => c.CountryCode.Trim().ToUpper().Replace(" ", "") == countrycode.CountryCode.Trim().ToUpper().Replace(" ", "")
+                        && c.Isdcode!= countrycode.Isdcode).Count();
+
+                        if (is_CountryCodeExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Country Code already exist." };
+                        }
+                        var is_CountryNameExist = db.GtCmcnms.Where(c => c.CountryName.Trim().ToUpper().Replace(" ", "") == countrycode.CountryName.Trim().ToUpper().Replace(" ", "")
+                        && c.Isdcode != countrycode.Isdcode).Count();
+
+                        if (is_CountryNameExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Country Name already exist." };
+                        }
+                        GtCmcnms ctr = db.GtCmcnms.Where(x => x.Isdcode == countrycode.Isdcode).FirstOrDefault();
+
+                       
+                        ctr.CountryCode = countrycode.CountryCode;
+                        ctr.CountryName = countrycode.CountryName;
+                        ctr.CountryFlag = countrycode.CountryFlag;
+                        ctr.CurrencyCode = countrycode.CurrencyCode;
+                        ctr.MobileNumberPattern = countrycode.MobileNumberPattern;
+                        ctr.Uidlabel = countrycode.Uidlabel;
+                        ctr.Uidpattern = countrycode.Uidpattern;
+                        ctr.Nationality = countrycode.Nationality;
+                        ctr.IsPoboxApplicable = countrycode.IsPoboxApplicable;
+                        ctr.PoboxPattern = countrycode.PoboxPattern;
+                        ctr.IsPinapplicable = countrycode.IsPinapplicable;
+                        ctr.PincodePattern = countrycode.PincodePattern;
+                        ctr.ActiveStatus = countrycode.ActiveStatus;
+                        ctr.ModifiedBy = countrycode.UserID;
+                        ctr.ModifiedOn = System.DateTime.Now;
+                        ctr.ModifiedTerminal = countrycode.TerminalID;
+
+                       await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Country Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        public async Task<DO_CountryCodes> GetCurrencyNamebyIsdCode(int IsdCode)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var Currency = db.GtCmcnms.Where(c => c.Isdcode == IsdCode).Join(db.GtCmcums,
+                         x => x.CurrencyCode,
+                         y => y.CurrencyCode,
+                        (x, y) => new DO_CountryCodes
+                        {
+                            CurrencyCode = x.CurrencyCode,
+                            CurrencyName = y.CurrencyName
+                        }).FirstOrDefaultAsync();
+
+
+                    return await Currency;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion Country Codes
+
+        #region Statutory Details
+        public async Task<List<DO_CountryStatutoryDetails>> GetStatutoryCodesbyIsdcode(int Isdcode)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var statutorycodes = db.GtCmcnst.Where(x=>x.Isdcode==Isdcode)
+
+                                  .Select(st => new DO_CountryStatutoryDetails
+                                  {
+                                     Isdcode=st.Isdcode,
+                                     StatutoryCode=st.StatutoryCode,
+                                     StatShortCode=st.StatShortCode,
+                                     StatutoryDescription=st.StatutoryDescription,
+                                     StatPattern=st.StatPattern,
+                                     ActiveStatus=st.ActiveStatus
+                                  }).ToListAsync();
+                    return await statutorycodes;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertOrUpdateStatutoryCodes(DO_CountryStatutoryDetails statutorycodes)
+        {
+            try
+            {
+                if (statutorycodes.StatutoryCode != 0)
+                {
+                    return await UpdateStatutoryCodes(statutorycodes);
+                }
+                else
+                {
+                    return await InsertStatutoryCodes(statutorycodes);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertStatutoryCodes(DO_CountryStatutoryDetails statutorycodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtCmcnst isStatshortcodeExists = db.GtCmcnst.FirstOrDefault(st =>st.Isdcode==statutorycodes.Isdcode && st.StatShortCode.ToUpper().Replace(" ", "") == statutorycodes.StatShortCode.ToUpper().Replace(" ", ""));
+
+                        if (isStatshortcodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Statutory Short Code already Exists in this" + statutorycodes.Isdcode+"Isd code"};
+                        }
+
+                        
+                           int maxval = db.GtCmcnst.Where(x=>x.Isdcode==statutorycodes.Isdcode).Select(c => c.StatutoryCode).DefaultIfEmpty().Max();
+                            int statutorycode_ = maxval + 1;
+                            var stat_code = new GtCmcnst
+                            {
+                               Isdcode=statutorycodes.Isdcode,
+                               StatutoryCode=statutorycode_,
+                               StatShortCode=statutorycodes.StatShortCode,
+                               StatutoryDescription=statutorycodes.StatutoryDescription,
+                               StatPattern=statutorycodes.StatPattern,
+                                ActiveStatus = statutorycodes.ActiveStatus,
+                                FormId= statutorycodes.FormId,
+                                CreatedBy = statutorycodes.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = statutorycodes.TerminalID
+                            };
+                            db.GtCmcnst.Add(stat_code);
+                           await db.SaveChangesAsync();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Statutory Code Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateStatutoryCodes(DO_CountryStatutoryDetails statutorycodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtCmcnst isStatshortcodeExists = db.GtCmcnst.FirstOrDefault(st => st.Isdcode == statutorycodes.Isdcode && st.StatShortCode.ToUpper().Replace(" ", "") == statutorycodes.StatShortCode.ToUpper().Replace(" ", "")
+                        && st.StatutoryCode!=statutorycodes.StatutoryCode);
+
+                        if (isStatshortcodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Statutory Short Code already Exists in this" + statutorycodes.Isdcode + "Isd code" };
+                        }
+
+                       
+                        GtCmcnst stat_code = db.GtCmcnst.Where(st => st.StatutoryCode == statutorycodes.StatutoryCode&&st.Isdcode==statutorycodes.Isdcode).FirstOrDefault();
+                        if (stat_code == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Statutory Code is not exist" };
+                        }
+
+                        stat_code.StatShortCode = statutorycodes.StatShortCode;
+                        stat_code.StatutoryDescription = statutorycodes.StatutoryDescription;
+                        stat_code.StatPattern = statutorycodes.StatPattern;
+                        stat_code.ActiveStatus = statutorycodes.ActiveStatus;
+                        stat_code.ModifiedBy = statutorycodes.UserID;
+                        stat_code.ModifiedOn = DateTime.Now;
+                        stat_code.ModifiedTerminal = statutorycodes.TerminalID;
+                       await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Statutory Code Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<List<DO_CountryStatutoryDetails>> GetActiveStatutoryCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var statutorycodes = db.GtCmcnst.Where(x => x.ActiveStatus==true)
+
+                                  .Select(st => new DO_CountryStatutoryDetails
+                                  {
+                                      StatutoryCode = st.StatutoryCode,
+                                      StatShortCode = st.StatShortCode,
+                                      StatutoryDescription=st.StatutoryDescription
+                                  }).ToListAsync();
+                    return await statutorycodes;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion Statutory Details
+
+        #region Tax Identification
+        public async Task<List<DO_TaxIdentification>> GetActiveTaxIdentification()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var Taxidentifications = db.GtCmcnti.Where(x => x.ActiveStatus == true)
+                        .Select(t => new DO_TaxIdentification
+                        {
+                            TaxIdentificationId = t.TaxIdentificationId,
+                            TaxIdentificationDesc = t.TaxIdentificationDesc
+                        }).ToListAsync();
+
+                    return await Taxidentifications;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion Identification
+    }
+}

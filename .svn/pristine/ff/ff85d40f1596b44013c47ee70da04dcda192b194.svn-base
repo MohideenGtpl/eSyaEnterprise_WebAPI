@@ -1,0 +1,273 @@
+﻿using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class SMSEngineRepository : ISMSEngineRepository
+    {
+        #region SMS Variable
+
+        public async Task<List<DO_SMSVariable>> GetSMSVariableInformation()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEcsmsv
+                         .Select(r => new DO_SMSVariable
+                         {
+                             Smsvariable = r.Smsvariable,
+                             Smscomponent = r.Smscomponent,
+                             ActiveStatus = r.ActiveStatus
+                         }).OrderBy(o => o.Smsvariable).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoSMSVariable(DO_SMSVariable obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_SMSVariableExist = db.GtEcsmsv.Any(a => a.Smsvariable.Trim().ToUpper() == obj.Smsvariable.Trim().ToUpper());
+                        if (is_SMSVariableExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Variable is already exist." };
+                        }
+
+                        bool is_SMSComponentExist = db.GtEcsmsv.Any(a => a.Smscomponent.Trim().ToUpper() == obj.Smscomponent.Trim().ToUpper());
+                        if (is_SMSComponentExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Component is already exist." };
+                        }
+
+                        var sm_sv = new GtEcsmsv
+                        {
+                            Smsvariable = obj.Smsvariable,
+                            Smscomponent = obj.Smscomponent,
+                            ActiveStatus = obj.ActiveStatus,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEcsmsv.Add(sm_sv);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "SMS Variable Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateSMSVariable(DO_SMSVariable obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_SMSComponentExist = db.GtEcsmsv.Where(w => w.Smscomponent.Trim().ToUpper().Replace(" ", "") == obj.Smscomponent.Trim().ToUpper().Replace(" ", "")
+                                && w.Smsvariable != obj.Smsvariable).FirstOrDefault();
+                        if (is_SMSComponentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Component is already exist." };
+                        }
+
+                        GtEcsmsv sm_sv = db.GtEcsmsv.Where(w => w.Smsvariable == obj.Smsvariable).FirstOrDefault();
+                        if (sm_sv == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Variable is not exist" };
+                        }
+
+                        sm_sv.Smscomponent = obj.Smscomponent;
+                        sm_sv.ActiveStatus = obj.ActiveStatus;
+                        sm_sv.ModifiedBy = obj.UserID;
+                        sm_sv.ModifiedOn = DateTime.Now;
+                        sm_sv.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "SMS Variable Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion SMS Variable
+
+        #region SMS Information
+
+        public async Task<List<DO_SMSHeader>> GetSMSHeaderInformationByFormId(int formId)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEcsmsh
+                        .Where(w => w.FormId == formId)
+                         .Select(r => new DO_SMSHeader
+                         {
+                             Smsid = r.Smsid,
+                             Smsdescription = r.Smsdescription,
+                             IsVariable = r.IsVariable,
+                             Tevent = r.Tevent,
+                             Smsstatement = r.Smsstatement,
+                             ActiveStatus = r.ActiveStatus
+                         }).OrderBy(o => o.Smsid).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoSMSHeader(DO_SMSHeader obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_SMSDescExist = db.GtEcsmsh.Any(a => a.Smsdescription.Trim().ToUpper() == obj.Smsdescription.Trim().ToUpper());
+                        if (is_SMSDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Description is already exist." };
+                        }
+
+                        var smsIdNumber = db.GtEcsmsh.Where(w => w.FormId == obj.FormId).Count();
+                        string smsId = obj.FormId.ToString() + "_" + (smsIdNumber + 1).ToString();
+
+                        var sm_sh = new GtEcsmsh
+                        {
+                            Smsid = smsId,
+                            FormId = obj.FormId,
+                            Smsdescription = obj.Smsdescription,
+                            IsVariable = obj.IsVariable,
+                            Tevent = obj.Tevent,
+                            Smsstatement = obj.Smsstatement,
+                            ActiveStatus = obj.ActiveStatus,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEcsmsh.Add(sm_sh);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "SMS Information Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateSMSHeader(DO_SMSHeader obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_SMSComponentExist = db.GtEcsmsh.Where(w => w.Smsdescription.Trim().ToUpper().Replace(" ", "") == obj.Smsdescription.Trim().ToUpper().Replace(" ", "")
+                                && w.Smsid != obj.Smsid && w.FormId == obj.FormId).FirstOrDefault();
+                        if (is_SMSComponentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Description is already exist." };
+                        }
+
+                        GtEcsmsh sm_sh = db.GtEcsmsh.Where(w => w.Smsid == obj.Smsid).FirstOrDefault();
+                        if (sm_sh == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "SMS Id is not exist" };
+                        }
+
+                        sm_sh.Smsdescription = obj.Smsdescription;
+                        sm_sh.IsVariable = obj.IsVariable;
+                        sm_sh.Tevent = obj.Tevent;
+                        sm_sh.Smsstatement = obj.Smsstatement;
+                        sm_sh.ActiveStatus = obj.ActiveStatus;
+                        sm_sh.ModifiedBy = obj.UserID;
+                        sm_sh.ModifiedOn = DateTime.Now;
+                        sm_sh.ModifiedTerminal = obj.TerminalID;
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "SMS Variable Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion SMS Information
+    }
+}

@@ -1,0 +1,286 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using eSyaConfigSetup.IF;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DL.DataLayer;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class DepartmentCodesRepository:IDepartmentCodesRepository
+    {
+        #region DepartmentCodes
+        public async Task<DO_ReturnParameter> InsertIntoDepartmentCodes(DO_DepartmentCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_DepartmentDescExist = db.GtEadpcd.Any(a => a.DepartmentDesc.Trim().ToUpper() == obj.DepartmentDesc.Trim().ToUpper());
+                        if (is_DepartmentDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Department Desc is already exist." };
+                        }
+                        is_DepartmentDescExist = db.GtEadpcd.Any(a => a.DeptShortDesc.Trim().ToUpper() == obj.DeptShortDesc.Trim().ToUpper());
+                        if (is_DepartmentDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Department Short Name is already exist." };
+                        }
+                        int maxval = db.GtEadpcd.Select(c => c.DepartmentId).DefaultIfEmpty().Max();
+                        int _DeptId = maxval + 1;
+                        var pa_rm = new GtEadpcd
+                        {
+                            DepartmentId = _DeptId,
+                            DepartmentDesc = obj.DepartmentDesc,
+                            DeptShortDesc = obj.DeptShortDesc,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEadpcd.Add(pa_rm);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Department Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateDepartmentCodes(DO_DepartmentCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_DepartmentExist = db.GtEadpcd.Where(w => w.DepartmentDesc.Trim().ToUpper().Replace(" ", "") == obj.DepartmentDesc.Trim().ToUpper().Replace(" ", "")
+                                && w.DepartmentId != obj.DepartmentID).FirstOrDefault();
+                        if (is_DepartmentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Department Desc is already exist." };
+                        }
+                        is_DepartmentExist = db.GtEadpcd.Where(w => w.DeptShortDesc.Trim().ToUpper().Replace(" ", "") == obj.DeptShortDesc.Trim().ToUpper().Replace(" ", "")
+                                && w.DepartmentId != obj.DepartmentID).FirstOrDefault();
+                        if (is_DepartmentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Department Short Desc is already exist." };
+                        }
+
+                        GtEadpcd pa_rm = db.GtEadpcd.Where(w => w.DepartmentId == obj.DepartmentID).FirstOrDefault();
+                        if (pa_rm == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Department does not exist" };
+                        }
+
+                        pa_rm.DepartmentDesc = obj.DepartmentDesc;
+                        pa_rm.DeptShortDesc = obj.DeptShortDesc;
+                        pa_rm.ActiveStatus = obj.ActiveStatus;
+                        pa_rm.ModifiedBy = obj.UserID;
+                        pa_rm.ModifiedOn = DateTime.Now;
+                        pa_rm.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Department Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<List<DO_DepartmentCodes>> GetDepartmentCodes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEadpcd
+                         .Select(r => new DO_DepartmentCodes
+                         {
+                             DepartmentID = r.DepartmentId,
+                             DepartmentDesc = r.DepartmentDesc,
+                             DeptShortDesc = r.DeptShortDesc,
+                             ActiveStatus = r.ActiveStatus
+
+                         }).OrderBy(o => o.DepartmentDesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        public async Task<DO_ReturnParameter> InsertIntoDepartmentLocationLink(DO_DepartmentLocation obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_DepartmentDescExist = db.GtEadpll.Any(a => a.BusinessKey == obj.BusinessKey && a.DepartmentId == obj.DepartmentID && a.LocationDescription.Trim().ToUpper() == obj.LocationDescription.Trim().ToUpper());
+                        if (is_DepartmentDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Location Desc is already exist." };
+                        }
+                        is_DepartmentDescExist = db.GtEadpll.Any(a => a.BusinessKey == obj.BusinessKey && a.LocnShortDesc.Trim().ToUpper() == obj.LocnShortDesc.Trim().ToUpper());
+                        if (is_DepartmentDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Location Short Name is already exist." };
+                        }
+                        int maxval = db.GtEadpll.Where(w => w.BusinessKey == obj.BusinessKey).Select(c => c.DeptLocnId).DefaultIfEmpty().Max();
+                        int _LocId = maxval + 1;
+                        var pa_rm = new GtEadpll
+                        {
+                            BusinessKey = obj.BusinessKey,
+                            DeptLocnId = _LocId,
+                            DepartmentId = obj.DepartmentID,
+                            LocationDescription = obj.LocationDescription,
+                            LocnShortDesc = obj.LocnShortDesc,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+
+                        };
+                        db.GtEadpll.Add(pa_rm);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Location Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateDepartmentLocationLink(DO_DepartmentLocation obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_DepartmentExist = db.GtEadpll.Where(w => w.BusinessKey == obj.BusinessKey && w.DepartmentId == obj.DepartmentID && w.LocationDescription.Trim().ToUpper().Replace(" ", "") == obj.LocationDescription.Trim().ToUpper().Replace(" ", "")
+                                && w.DeptLocnId != obj.DeptLocnID).FirstOrDefault();
+                        if (is_DepartmentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Location Desc is already exist." };
+                        }
+                        is_DepartmentExist = db.GtEadpll.Where(w => w.BusinessKey == obj.BusinessKey && w.LocnShortDesc.Trim().ToUpper().Replace(" ", "") == obj.LocnShortDesc.Trim().ToUpper().Replace(" ", "")
+                                && w.DeptLocnId != obj.DeptLocnID).FirstOrDefault();
+                        if (is_DepartmentExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Location Short Desc is already exist." };
+                        }
+
+                        GtEadpll pa_rm = db.GtEadpll.Where(w => w.BusinessKey == obj.BusinessKey && w.DepartmentId == obj.DepartmentID && w.DeptLocnId == obj.DeptLocnID).FirstOrDefault();
+                        if (pa_rm == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Location does not exist" };
+                        }
+
+                        pa_rm.BusinessKey = obj.BusinessKey;
+                        pa_rm.DepartmentId = obj.DepartmentID;
+                        pa_rm.LocationDescription = obj.LocationDescription;
+                        pa_rm.LocnShortDesc = obj.LocnShortDesc;
+                        pa_rm.ActiveStatus = obj.ActiveStatus;
+                        pa_rm.ModifiedBy = obj.UserID;
+                        pa_rm.ModifiedOn = DateTime.Now;
+                        pa_rm.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Location Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<List<DO_DepartmentLocation>> GetDepartmentLocation(int businessKey, int departmentId)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEadpll
+                        .Where(w => w.BusinessKey == businessKey && w.DepartmentId == departmentId)
+                         .Select(r => new DO_DepartmentLocation
+                         {
+                             DepartmentID = r.DepartmentId,
+                             DeptLocnID = r.DeptLocnId,
+                             LocationDescription = r.LocationDescription,
+                             LocnShortDesc = r.LocnShortDesc,
+                             ActiveStatus = r.ActiveStatus
+
+                         }).OrderBy(o => o.LocationDescription).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

@@ -1,0 +1,103 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ProcessMasterController:ControllerBase
+    {
+        private readonly IProcessMasterRepository _ProcessMasterRepository;
+        public ProcessMasterController(IProcessMasterRepository ProcessMasterRepository)
+        {
+            _ProcessMasterRepository = ProcessMasterRepository;
+        }
+        /// <summary>
+        /// Get Process Master.
+        /// UI Reffered - Process Control
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetProcessMaster()
+        {
+            var proc_masters = _ProcessMasterRepository.GetProcessMaster();
+            return Ok(proc_masters);
+        }
+
+        /// <summary>
+        /// Insert into Process Master Table
+        /// UI Reffered - Process Control,
+        /// </summary>
+        public IActionResult InsertIntoProcessMaster(DO_ProcessMaster obj)
+        {
+            var msg = _ProcessMasterRepository.InsertIntoProcessMaster(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Update into Process Master Table
+        /// UI Reffered - Process Control,
+        /// </summary>
+        public IActionResult UpdateProcessMaster(DO_ProcessMaster obj)
+        {
+            var msg = _ProcessMasterRepository.UpdateProcessMaster(obj);
+            return Ok(msg);
+        }
+
+
+        /// <summary>
+        /// Get Process Rule 
+        /// UI Reffered - Application Rule
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetProcessRule()
+        {
+            var proc_rules = _ProcessMasterRepository.GetProcessRule();
+            return Ok(proc_rules);
+        }
+
+        /// <summary>
+        /// Get Process Master List for Combo.
+        /// UI Reffered - Application Rule
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetActiveProcessMaster()
+        {
+            var aproc_rules = _ProcessMasterRepository.GetActiveProcessMaster();
+            return Ok(aproc_rules);
+        }
+
+        /// <summary>
+        /// Get Process Rules for specific Process Id.
+        /// UI Reffered - Appplication Rule
+        /// </summary>
+        /// <param name="processId"></param>
+        /// <returns></returns>
+        public IActionResult GetProcessRuleByProcessId(int processId)
+        {
+            var proc_rule = _ProcessMasterRepository.GetProcessRuleByProcessId(processId);
+            return Ok(proc_rule);
+        }
+
+        /// <summary>
+        /// Insert into Process Rule Table
+        /// UI Reffered - Application Rule,
+        /// </summary>
+        public IActionResult InsertIntoProcessRule(DO_ProcessRule obj)
+        {
+            var msg = _ProcessMasterRepository.InsertIntoProcessRule(obj);
+            return Ok(msg);
+        }
+
+        /// <summary>
+        /// Update Process Rule Table
+        /// UI Reffered - Application Rule,
+        /// </summary>
+        public IActionResult UpdateProcessRule(DO_ProcessRule obj)
+        {
+            var msg = _ProcessMasterRepository.UpdateProcessRule(obj);
+            return Ok();
+        }
+    }
+}

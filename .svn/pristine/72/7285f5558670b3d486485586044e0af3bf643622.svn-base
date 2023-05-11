@@ -1,0 +1,34 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IProcessMasterRepository
+    {
+        #region Process Master
+
+        List<DO_ProcessMaster> GetProcessMaster();
+
+        DO_ReturnParameter InsertIntoProcessMaster(DO_ProcessMaster obj);
+
+        DO_ReturnParameter UpdateProcessMaster(DO_ProcessMaster obj);
+
+        #endregion
+
+        #region Process Rule
+
+        List<DO_ProcessRule> GetProcessRule();
+
+        List<DO_ProcessMaster> GetActiveProcessMaster();
+
+        List<DO_ProcessRule> GetProcessRuleByProcessId(int processId);
+
+        DO_ReturnParameter InsertIntoProcessRule(DO_ProcessRule obj);
+
+        DO_ReturnParameter UpdateProcessRule(DO_ProcessRule obj);
+
+        #endregion
+    }
+}

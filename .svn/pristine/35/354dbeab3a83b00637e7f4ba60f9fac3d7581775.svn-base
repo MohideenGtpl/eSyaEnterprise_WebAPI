@@ -1,0 +1,137 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ProcessMasterController:ControllerBase
+    {
+        private readonly IProcessMasterRepository _ProcessMasterRepository;
+        public ProcessMasterController(IProcessMasterRepository ProcessMasterRepository)
+        {
+            _ProcessMasterRepository = ProcessMasterRepository;
+        }
+        /// <summary>
+        /// Get Process Master.
+        /// UI Reffered - Process Control
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetProcessMaster()
+        {
+            var proc_masters =await _ProcessMasterRepository.GetProcessMaster();
+            return Ok(proc_masters);
+        }
+
+        /// <summary>
+        /// Insert into Process Master Table
+        /// UI Reffered - Process Control,
+        /// </summary>
+        public async Task<IActionResult> InsertIntoProcessMaster(DO_ProcessMaster obj)
+        {
+            var rp = await _ProcessMasterRepository.InsertIntoProcessMaster(obj);
+            return Ok (rp);
+        }
+
+        /// <summary>
+        /// Update into Process Master Table
+        /// UI Reffered - Process Control,
+        /// </summary>
+        public async Task<IActionResult> UpdateProcessMaster(DO_ProcessMaster obj)
+        {
+            var rp = await _ProcessMasterRepository.UpdateProcessMaster(obj);
+            return Ok(rp);
+        }
+
+
+        /// <summary>
+        /// Get Process Rule 
+        /// UI Reffered - Application Rule
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetProcessRule()
+        {
+            var proc_rules = await _ProcessMasterRepository.GetProcessRule();
+            return Ok(proc_rules);
+        }
+
+        /// <summary>
+        /// Get Process Master List for Combo.
+        /// UI Reffered - Application Rule
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetActiveProcessMaster()
+        {
+            var aproc_rules = await _ProcessMasterRepository.GetActiveProcessMaster();
+            return Ok(aproc_rules);
+        }
+
+        /// <summary>
+        /// Get Process Rules for specific Process Id.
+        /// UI Reffered - Appplication Rule
+        /// </summary>
+        /// <param name="processId"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetProcessRuleByProcessId(int processId)
+        {
+            var proc_rule = await _ProcessMasterRepository.GetProcessRuleByProcessId(processId);
+            return Ok(proc_rule);
+        }
+
+        /// <summary>
+        /// Insert into Process Rule Table
+        /// UI Reffered - Application Rule,
+        /// </summary>
+        public async Task<IActionResult> InsertIntoProcessRule(DO_ProcessRule obj)
+        {
+            var rp = await _ProcessMasterRepository.InsertIntoProcessRule(obj);
+            return Ok(rp);
+        }
+
+        /// <summary>
+        /// Update Process Rule Table
+        /// UI Reffered - Application Rule,
+        /// </summary>
+        public async Task<IActionResult> UpdateProcessRule(DO_ProcessRule obj)
+        {
+            var rp = await _ProcessMasterRepository.UpdateProcessRule(obj);
+            return Ok(rp);
+        }
+
+
+        /// <summary>
+        /// Get Process Rule by Segment wise.
+        /// UI Reffered - Process Rule
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetProcessRulebySegmentwise()
+        {
+            var aproc_rules = await _ProcessMasterRepository.GetProcessRulebySegmentwise();
+            return Ok(aproc_rules);
+        }
+
+        /// <summary>
+        /// Get Process Rule by Segment wise.
+        /// UI Reffered - Process Rule
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetProcessRulebyBusinessKey(int BusinessKey)
+        {
+            var pro_rules = await _ProcessMasterRepository.GetProcessRulebyBusinessKey(BusinessKey);
+            return Ok(pro_rules);
+        }
+
+        /// <summary>
+        /// Insert or Update into Application Rule by Segment wise
+        /// UI Reffered - Process Rule
+        /// </summary>
+        public async Task<IActionResult> InsertorUpdateProcessRulebySegment(DO_ProcessRulebySegment obj)
+        {
+            var rp = await _ProcessMasterRepository.InsertorUpdateProcessRulebySegment(obj);
+            return Ok(rp);
+        }
+    }
+}

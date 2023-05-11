@@ -1,0 +1,285 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+   public class StoreMasterRepository : IStoreMasterRepository
+    {
+        public async Task<List<DO_StoreMaster>> GetStoreCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEcstrm
+
+                                  .Select(s => new DO_StoreMaster
+                                  {
+                                      StoreType =s.StoreType,
+                                      StoreCode=s.StoreCode,
+                                      StoreDesc=s.StoreDesc,
+                                      //IsMaterial=s.IsMaterial,
+                                      //IsPharmacy=s.IsPharmacy,
+                                      //IsStationary=s.IsStationary,
+                                      //IsCafeteria=s.IsCafeteria,
+                                      //IsFandB=s.IsFandB,
+                                      //IsCustodianStore=s.IsCustodianStore,
+                                      //IsAccountingStore=s.IsAccountingStore,
+                                      //IsConsumptionStore=s.IsConsumptionStore,
+                                      ActiveStatus = s.ActiveStatus
+                                  }).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<DO_Parameters>> GetStoreParameterList(int StoreCode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                try
+                {
+                    var sp_ps = db.GtEcpast
+                        .Where(w => w.StoreCode == StoreCode && w.ActiveStatus)
+                        .AsNoTracking()
+                        .Select(x => new DO_Parameters
+                        {
+                            ParameterId = x.ParameterId,
+                            ParameterValue = x.ParamAction ? "true":"false"
+                        }).ToListAsync();
+
+                    return await sp_ps;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertOrUpdateStoreCodes(DO_StoreMaster storecodes)
+        {
+            try
+            {
+                if (storecodes.StoreCode != 0)
+                {
+                    return await UpdateStoreCodes(storecodes);
+                }
+                else
+                {
+                    return await InsertStoreCodes(storecodes);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertStoreCodes(DO_StoreMaster storecodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEcstrm isStorecodeExists =  db.GtEcstrm.FirstOrDefault(c => c.StoreDesc.ToUpper().Replace(" ", "") == storecodes.StoreDesc.ToUpper().Replace(" ", ""));
+
+                        if (isStorecodeExists == null)
+                        {
+                            int maxval = db.GtEcstrm.Select(c => c.StoreCode).DefaultIfEmpty().Max();
+                            int storecode_ = maxval + 1;
+                            var objstorecode = new GtEcstrm
+                            {
+                                StoreCode= storecode_,
+                                StoreType=storecodes.StoreType,
+                                StoreDesc=storecodes.StoreDesc,
+                                FormId =storecodes.FormId,
+                                ActiveStatus=storecodes.ActiveStatus,
+                                CreatedBy = storecodes.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = storecodes.TerminalID
+                            };
+                            db.GtEcstrm.Add(objstorecode);
+
+                            foreach (DO_StoreParameter ip in storecodes.l_StoreParm)
+                            {
+                                var pMaster = new GtEcpast
+                                {
+                                    StoreCode = storecode_,
+                                    ParameterId = ip.ParameterID,
+                                    ParamAction = ip.ParmAction,
+                                    ActiveStatus = ip.ActiveStatus,
+                                    FormId = ip.FormID,
+                                    CreatedBy = ip.UserID,
+                                    CreatedOn = System.DateTime.Now,
+                                    CreatedTerminal = ip.TerminalID,
+                                };
+                                db.GtEcpast.Add(pMaster);
+                            }
+
+                            await db.SaveChangesAsync();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Store Code is created Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "This Store Description is already used by another Store Code." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateStoreCodes(DO_StoreMaster storecodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEcstrm isStorecodeExists = db.GtEcstrm.FirstOrDefault(c => c.StoreCode != storecodes.StoreCode && c.StoreDesc.ToUpper().Replace(" ", "") == storecodes.StoreDesc.ToUpper().Replace(" ", ""));
+                        if (isStorecodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code Description is already exist." };
+                        }
+
+                        GtEcstrm st_code = db.GtEcstrm.Where(s => s.StoreCode == storecodes.StoreCode).FirstOrDefault();
+                        if (st_code == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code is not exist" };
+                        }
+                        st_code.StoreDesc = storecodes.StoreDesc;
+                        st_code.ActiveStatus = storecodes.ActiveStatus;
+                        st_code.ModifiedBy = storecodes.UserID;
+                        st_code.ModifiedOn = DateTime.Now;
+                        st_code.ModifiedTerminal = storecodes.TerminalID;
+
+                        foreach (DO_StoreParameter ip in storecodes.l_StoreParm)
+                        {
+                            GtEcpast sPar = db.GtEcpast.Where(x => x.StoreCode == ip.StoreCode && x.ParameterId == ip.ParameterID).FirstOrDefault();
+                            if (sPar != null)
+                            {
+                                sPar.ParamAction = ip.ParmAction;
+                                sPar.ActiveStatus = storecodes.ActiveStatus;
+                                sPar.ModifiedBy = storecodes.UserID;
+                                sPar.ModifiedOn = System.DateTime.Now;
+                                sPar.ModifiedTerminal = storecodes.TerminalID;
+                            }
+                            else
+                            {
+                                var pMaster = new GtEcpast
+                                {
+                                    StoreCode = ip.StoreCode,
+                                    ParameterId = ip.ParameterID,
+                                    ParamAction = ip.ParmAction,
+                                    ActiveStatus = ip.ActiveStatus,
+                                    FormId = ip.FormID,
+                                    CreatedBy = ip.UserID,
+                                    CreatedOn = System.DateTime.Now,
+                                    CreatedTerminal = ip.TerminalID,
+                                };
+                                db.GtEcpast.Add(pMaster);
+                            }
+                        }
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Store Code Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> DeleteStoreCode(int Storecode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEcstrm store =  db.GtEcstrm.FirstOrDefault(c => c.StoreCode== Storecode);
+
+                        if (store != null)
+                        {
+                            db.GtEcstrm.Remove(store);
+                            await db.SaveChangesAsync();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Store Code Deleted Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code Couldn't delete" };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<List<DO_StoreMaster>> GetActiveStoreCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtEcstrm.Where(x=>x.ActiveStatus==true)
+
+                                  .Select(s => new DO_StoreMaster
+                                  {
+                                      StoreCode = s.StoreCode,
+                                      StoreDesc = s.StoreDesc
+                                  }).ToListAsync();
+                    return await result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

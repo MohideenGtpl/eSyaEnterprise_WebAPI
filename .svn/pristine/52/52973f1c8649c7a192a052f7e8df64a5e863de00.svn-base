@@ -1,0 +1,57 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ParametersController : ControllerBase
+    {
+        private readonly IParametersRepository _ParametersRepository;
+        public ParametersController(IParametersRepository parametersRepository)
+        {
+            _ParametersRepository = parametersRepository;
+        }
+        
+        /// <summary>
+        /// Get Parameters Information by Parameter Type.
+        /// UI Reffered - Parameters
+        /// </summary>
+        /// <param name="parameterType"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetParametersInformationByParameterType(int parameterType)
+        {
+            var pa_rm = await _ParametersRepository.GetParametersInformationByParameterType(parameterType);
+            return Ok(pa_rm);
+        }
+
+        /// <summary>
+        /// Insert into Parameter .
+        /// UI Reffered - Parameter
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoParameters(DO_Parameters obj)
+        {
+            var msg = await _ParametersRepository.InsertIntoParameters(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update Parameter .
+        /// UI Reffered - Parameter
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateParameters(DO_Parameters obj)
+        {
+            var msg = await _ParametersRepository.UpdateParameters(obj);
+            return Ok(msg);
+
+        }
+
+    }
+}

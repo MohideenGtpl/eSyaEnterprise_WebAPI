@@ -1,0 +1,29 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IFormsRepository
+    {
+        Task<List<DO_Forms>> GetFormDetails();
+
+        Task<List<DO_Forms>> GetInternalFormDetails();
+
+        Task<DO_Forms> GetFormDetailsByID(int formID);
+
+        Task<List<DO_Forms>> GetInternalFormByFormID(int formID);
+
+        Task<DO_ReturnParameter> InsertUpdateIntoFormMaster(DO_Forms obj);
+
+        Task<DO_ReturnParameter> InsertIntoInternalForm(DO_Forms obj);
+
+        Task<List<DO_FormAction>> GetFormAction();
+
+        Task<List<DO_FormAction>> GetFormActionByID(int formID);
+
+        Task<DO_ReturnParameter> InsertIntoFormAction(DO_Forms obj);
+    }
+}

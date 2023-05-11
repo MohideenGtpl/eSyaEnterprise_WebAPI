@@ -1,0 +1,220 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+   public class StoreMasterRepository : IStoreMasterRepository
+    {
+        public List<DO_StoreMaster> GetStoreCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtImstms
+
+                                  .Select(s => new DO_StoreMaster
+                                  {
+                                      StoreType =s.StoreType,
+                                      StoreCode=s.StoreCode,
+                                      StoreDesc=s.StoreDesc,
+                                      IsMaterial=s.IsMaterial,
+                                      IsPharmacy=s.IsPharmacy,
+                                      IsStationary=s.IsStationary,
+                                      IsCafeteria=s.IsCafeteria,
+                                      IsFandB=s.IsFandB,
+                                      ActiveStatus = s.ActiveStatus
+                                  }).ToList();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertOrUpdateStoreCodes(DO_StoreMaster storecodes)
+        {
+            try
+            {
+                if (storecodes.StoreCode != 0)
+                {
+                    return UpdateStoreCodes(storecodes);
+                }
+                else
+                {
+                    return InsertStoreCodes(storecodes);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DO_ReturnParameter InsertStoreCodes(DO_StoreMaster storecodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtImstms isStorecodeExists = db.GtImstms.FirstOrDefault(c => c.StoreDesc.ToUpper().Replace(" ", "") == storecodes.StoreDesc.ToUpper().Replace(" ", ""));
+
+                        if (isStorecodeExists == null)
+                        {
+                            int maxval = db.GtImstms.Select(c => c.StoreCode).DefaultIfEmpty().Max();
+                            int storecode_ = maxval + 1;
+                            var objstorecode = new GtImstms
+                            {
+                                StoreCode= storecode_,
+                                StoreType=storecodes.StoreType,
+                                StoreDesc=storecodes.StoreDesc,
+                                IsMaterial=storecodes.IsMaterial,
+                                IsPharmacy=storecodes.IsPharmacy,
+                                IsStationary=storecodes.IsStationary,
+                                IsCafeteria=storecodes.IsCafeteria,
+                                IsFandB=storecodes.IsFandB,
+                                ActiveStatus=storecodes.ActiveStatus,
+                                CreatedBy = storecodes.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = storecodes.TerminalID
+                            };
+                            db.GtImstms.Add(objstorecode);
+                            db.SaveChanges();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Store Code is created Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "This Store Description is already used by another Store Code." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateStoreCodes(DO_StoreMaster storecodes)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtImstms isStorecodeExists = db.GtImstms.FirstOrDefault(c => c.StoreCode != storecodes.StoreCode && c.StoreDesc.ToUpper().Replace(" ", "") == storecodes.StoreDesc.ToUpper().Replace(" ", ""));
+                        if (isStorecodeExists != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code Description is already exist." };
+                        }
+
+                        GtImstms st_code = db.GtImstms.Where(s => s.StoreCode == storecodes.StoreCode).FirstOrDefault();
+                        if (st_code == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code is not exist" };
+                        }
+                        st_code.StoreDesc = storecodes.StoreDesc;
+                        st_code.IsMaterial = storecodes.IsMaterial;
+                        st_code.IsPharmacy = storecodes.IsPharmacy;
+                        st_code.IsStationary = storecodes.IsStationary;
+                        st_code.IsCafeteria = storecodes.IsCafeteria;
+                        st_code.IsFandB = storecodes.IsFandB;
+                        st_code.ActiveStatus = storecodes.ActiveStatus;
+                        st_code.ModifiedBy = storecodes.UserID;
+                        st_code.ModifiedOn = DateTime.Now;
+                        st_code.ModifiedTerminal = storecodes.TerminalID;
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Store Code Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter DeleteStoreCode(int Storecode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtImstms store = db.GtImstms.FirstOrDefault(c => c.StoreCode== Storecode);
+
+                        if (store != null)
+                        {
+                            db.GtImstms.Remove(store);
+                            db.SaveChanges();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Store Code Deleted Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Store Code Couldn't delete" };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public List<DO_StoreMaster> GetActiveStoreCodes()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtImstms.Where(x=>x.ActiveStatus==true)
+
+                                  .Select(s => new DO_StoreMaster
+                                  {
+                                      StoreCode = s.StoreCode,
+                                      StoreDesc = s.StoreDesc
+                                  }).ToList();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IReportHeaderRepository
+    {
+        Task<List<DO_ReportHeader>> GetReportHeaderList(int BusinessKey);
+
+        Task<DO_ReturnParameter> InsertOrUpdateReportHeader(DO_ReportHeader rpHeader);
+    }
+}

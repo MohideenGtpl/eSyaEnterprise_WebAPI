@@ -1,0 +1,16 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+  public interface IInventoryRulesRepository
+    {
+        List<DO_InventoryRules> GetInventoryRules();
+
+        DO_ReturnParameter InsertInventoryRule(DO_InventoryRules inventoryRule);
+
+        DO_ReturnParameter UpdateInventoryRule(DO_InventoryRules inventoryRule);
+    }
+}

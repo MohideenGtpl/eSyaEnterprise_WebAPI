@@ -1,0 +1,117 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class DocumentControlController : ControllerBase
+    {
+        private readonly IDocumentControlRepository _DocumentControlRepository;
+        public DocumentControlController(IDocumentControlRepository DocumentControlRepository)
+        {
+            _DocumentControlRepository = DocumentControlRepository;
+        }
+        #region Document Control
+        /// <summary>
+        /// Getting Document Control List.
+        /// UI Reffered - Document Control Grid
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetDocumentControls()
+        {
+            var doc_ctrls =await _DocumentControlRepository.GetDocumentControls();
+            return Ok(doc_ctrls);
+        }
+        /// <summary>
+        /// Insert Document Control .
+        /// UI Reffered -Document Control
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertDocumentControl(DO_DocumentControl control)
+        {
+            var msg =await _DocumentControlRepository.InsertDocumentControl(control);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Update Document Control .
+        /// UI Reffered -Document Control
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateDocumentControl(DO_DocumentControl control)
+        {
+            var msg =await _DocumentControlRepository.UpdateDocumentControl(control);
+            return Ok(msg);
+
+        }
+        #endregion Document Control
+
+        #region Calendar Header
+
+
+        /// <summary>
+        /// Getting Calendar Header.
+        /// UI Reffered - Calendar Header Grid
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarHeaders()
+        {
+            var cal_headers =await _DocumentControlRepository.GetCalendarHeaders();
+            return Ok(cal_headers);
+        }
+
+
+        /// <summary>
+        /// Getting Calendar Details.
+        /// UI Reffered - Calendar Details Gridrra
+        /// UI-Parram -Business Key && Financial Year
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetCalendarDetailsbyBusinessKeyAndFinancialYear(int Businesskey ,decimal FinancialYear)
+        {
+            var cal_details = _DocumentControlRepository.GetCalendarDetailsbyBusinessKeyAndFinancialYear(Businesskey, FinancialYear);
+            return Ok(cal_details);
+        }
+
+
+        /// <summary>
+        /// Getting Cbo Financial Year By Business Key.
+        /// UI Reffered - Calendar Details for Dropdown
+        /// UI-Param-Business Key
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetFinancialYearbyBusinessKey(int Businesskey)
+        {
+            var fin_years =await _DocumentControlRepository.GetFinancialYearbyBusinessKey(Businesskey);
+            return Ok(fin_years);
+        }
+        /// <summary>
+        /// Insert Calendar Header & Details Table .
+        /// UI Reffered -Calendar Header
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertCalendarHeaderAndDetails(DO_CalendarDefinition calendarheadar)
+        {
+            var msg =await _DocumentControlRepository.InsertCalendarHeaderAndDetails(calendarheadar);
+            return Ok(msg);
+
+        }
+        /// <summary>
+        /// Update Calendar details .
+        /// UI Reffered -Calendar details
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateCalendardetails(DO_CalendarDetails caldetails)
+        {
+            var msg =await _DocumentControlRepository.UpdateCalendardetails(caldetails);
+            return Ok(msg);
+
+        }
+      
+        #endregion Calendar Header
+    }
+}

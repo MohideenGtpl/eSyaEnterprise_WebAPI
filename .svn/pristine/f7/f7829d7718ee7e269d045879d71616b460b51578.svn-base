@@ -1,0 +1,76 @@
+﻿using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DO;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ConfigMasterDataController : ControllerBase
+    {
+
+        [HttpGet]
+        public IActionResult GetApplicationCodesByCodeType(int codeType)
+        {
+            var ds = new CommonMethod().GetApplicationCodesByCodeType(codeType);
+            return Ok(ds);
+        }
+
+        [HttpPost]
+        public IActionResult GetApplicationCodesByCodeTypeList(List<int> l_codeType)
+        {
+            var ds = new CommonMethod().GetApplicationCodesByCodeTypeList(l_codeType);
+            return Ok(ds);
+        }
+
+        /// <summary>
+        /// Get Business key.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetBusinessKey()
+        {
+            var ds = new CommonMethod().GetBusinessKey();
+            return Ok(ds);
+        }
+
+        /// <summary>
+        /// Get ISDCodes.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetISDCodes()
+        {
+            var ds = new CommonMethod().GetISDCodes();
+            return Ok(ds);
+        }
+
+        /// <summary>
+        /// Get Tax Codes by ISD Codes.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetTaxCodeByISDCodes(int ISDCode)
+        {
+            var ds = new CommonMethod().GetTaxCodeByISDCodes(ISDCode);
+            return Ok(ds);
+        }
+
+
+        /// <summary>
+        /// Get Language.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetLanguage()
+        {
+            var ds = new CommonMethod().GetLanguage();
+            return Ok(ds);
+        }
+    }
+}

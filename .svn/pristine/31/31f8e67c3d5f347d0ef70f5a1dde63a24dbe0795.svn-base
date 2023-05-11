@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.DO
+{
+    public class DO_InventoryRules
+    {
+        public string InventoryRuleId { get; set; }
+        public string InventoryRuleDesc { get; set; }
+        public int InventoryRule { get; set; }
+        public bool ApplyToSrn { get; set; }
+        public bool ActiveStatus { get; set; }
+    }
+}

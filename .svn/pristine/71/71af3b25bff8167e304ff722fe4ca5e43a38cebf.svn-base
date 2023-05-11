@@ -1,0 +1,311 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class LocalizationMasterRepository:ILocalizationMasterRepository
+    {
+        #region Localization Master
+        public List<DO_LocalizationMaster> GetLocalizationTableMaster()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    return db.GtCmltms
+                    .Select(t => new DO_LocalizationMaster
+                    {
+                        TableCode = t.TableCode,
+                        TableName = t.TableName,
+                        SchemaName = t.SchemaName,
+                        ActiveStatus = t.ActiveStatus
+                    }).ToList();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertOrUpdateLocalizationTableMaster(DO_LocalizationMaster obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if(obj.IsInsert)
+                        {
+                            if (db.GtCmltms.Where(t => t.TableCode == obj.TableCode).Count() > 0)
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Table Code already exist." };
+                            }
+                        }
+
+                        if (db.GtCmltms.Where(t => t.TableName.Trim().ToUpper() == obj.TableName.Trim().ToUpper() && t.TableCode != obj.TableCode).Count() > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Table Name already exist." };
+                        }
+                        else if (db.GtCmltms.Where(t => t.SchemaName.Trim().ToUpper() == obj.SchemaName.Trim().ToUpper() && t.TableCode != obj.TableCode).Count() > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Schema Name already exist." };
+                        }
+                        else
+                        {
+                            GtCmltms lm = db.GtCmltms.Where(x => x.TableCode == obj.TableCode).FirstOrDefault();
+
+                            if (lm == null)
+                            {
+                                lm = new GtCmltms
+                                {
+                                    TableCode = obj.TableCode,
+                                    SchemaName = obj.SchemaName,
+                                    TableName = obj.TableName,
+                                    ActiveStatus = obj.ActiveStatus,
+                                    CreatedBy = obj.UserID,
+                                    CreatedOn = System.DateTime.Now,
+                                    CreatedTerminal = obj.TerminalID
+                                };
+                                db.GtCmltms.Add(lm);
+                            }
+                            else
+                            {
+                                lm.SchemaName = obj.SchemaName;
+                                lm.TableName = obj.TableName;
+                                lm.ActiveStatus = obj.ActiveStatus;
+                                lm.ModifiedBy = obj.UserID;
+                                lm.ModifiedOn = System.DateTime.Now;
+                                lm.ModifiedTerminal = obj.TerminalID;
+                            }
+
+                            db.SaveChanges();
+                            dbContext.Commit();
+
+                            return new DO_ReturnParameter() { Status = true, Message = "Table Mapping Created Successfully." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Localization Language Mapping
+        public List<DO_LocalizationMaster> GetLocalizationMaster()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    return db.GtCmltms.Where(x => x.ActiveStatus == true)
+                         .Select(t => new DO_LocalizationMaster
+                         {
+                             TableCode = t.TableCode,
+                             TableName = t.TableName,
+                         }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertOrUpdateLocalizationLanguageMapping(List<DO_LocalizationLanguageMapping> obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        foreach (var l in obj.Where(w=> w.FieldDescLanguage != null && w.FieldDescLanguage != ""))
+                        {
+                            GtCmlttl tm = db.GtCmlttl.Where(x => x.LanguageCode == l.LanguageCode
+                                            && x.TableCode == l.TableCode
+                                            && x.TablePrimaryKeyId == l.TablePrimaryKeyId).FirstOrDefault();
+                            if (tm == null)
+                            {
+                                var add = new GtCmlttl
+                                {
+                                    LanguageCode = l.LanguageCode,
+                                    TableCode = l.TableCode,
+                                    TablePrimaryKeyId = l.TablePrimaryKeyId,
+                                    FieldDescLanguage = l.FieldDescLanguage,
+                                    ActiveStatus = true,
+                                    CreatedBy = l.UserID,
+                                    CreatedOn = System.DateTime.Now,
+                                    CreatedTerminal = l.TerminalID
+                                };
+                                db.GtCmlttl.Add(add);
+                            }
+                            else
+                            {
+                                tm.FieldDescLanguage = l.FieldDescLanguage;
+                                tm.ActiveStatus = true;
+                                tm.ModifiedBy = l.UserID;
+                                tm.ModifiedOn = System.DateTime.Now;
+                                tm.ModifiedTerminal = l.TerminalID;
+                            }
+                            db.SaveChanges();
+                        }
+                        
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Saved Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public List<DO_LocalizationLanguageMapping> GetLocalizationLanguageMapping(string languageCode, int tableCode)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var SchemaName = db.GtCmltms.Where(w => w.TableCode == tableCode).FirstOrDefault().SchemaName;
+
+                    var tableMasterDetail = GetTableKeyValue(db, SchemaName);
+
+                    if (tableMasterDetail.Count() > 0)
+                    {
+                        var lm = tableMasterDetail
+                            .GroupJoin(db.GtCmlttl.Where(w => w.LanguageCode == languageCode
+                                    && w.TableCode == tableCode),
+                                m => m.TablePrimaryKeyId,
+                                l => l.TablePrimaryKeyId,
+                                (m, l) => new { m, l = l.FirstOrDefault() }).DefaultIfEmpty()
+                                .Select(r => new DO_LocalizationLanguageMapping
+                                {
+                                    TablePrimaryKeyId = r.m.TablePrimaryKeyId,
+                                    FieldDescription = r.m.FieldDesc,
+                                    FieldDescLanguage = r.l != null ? r.l.FieldDescLanguage : "",
+                                }).ToList();
+
+                        return lm;
+                    }
+                    else
+                       return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public IEnumerable<DO_TableField> GetTableKeyValue(eSyaEnterprise db, string SchemaName)
+        {
+            
+            if (SchemaName.ToUpper() == "GT_CMFMFD")
+            {
+                return db.GtCmfmfd
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.FormId,
+                        FieldDesc = r.FormName
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_CMMAMO")
+            {
+                return db.GtCmmamo
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.MainMenuId,
+                        FieldDesc = r.MainMenu
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_CMSBMU")
+            {
+                return db.GtCmsbmu
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.MenuItemId,
+                        FieldDesc = r.MenuItemName
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_EAAPCD")
+            {
+                return db.GtEaapcd.Where(w => w.ActiveStatus)
+                    .Join(db.GtCmapct,
+                    a => a.CodeType,
+                    c => c.CodeType,
+                    (a,c) => new { a,c})
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.a.ApplicationCode,
+                        FieldDesc = r.c.CodeTyepDesc +" - "+ r.a.CodeDesc
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_CMBSLO")
+            {
+                return db.GtCmbslo
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.BusinessKey,
+                        FieldDesc = r.LocationDescription
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_CMCNMS")
+            {
+                return db.GtCmcnms
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.Isdcode,
+                        FieldDesc = r.CountryName
+                    });
+            }
+            else if (SchemaName.ToUpper() == "GT_IMSTMS")
+            {
+                return db.GtImstms
+                    .Select(r => new DO_TableField
+                    {
+                        TablePrimaryKeyId = r.StoreCode,
+                        FieldDesc = r.StoreDesc
+                    });
+            }
+            return null;
+        }
+
+        
+
+        #endregion
+    }
+
+    public class DO_TableField
+    {
+        public int TablePrimaryKeyId { get; set; }
+        public string FieldDesc { get; set; }
+    }
+}

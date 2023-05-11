@@ -1,0 +1,107 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class TemplateCreatorController : ControllerBase
+    {
+        private readonly ITemplateCreatorRepository _TemplateCreatorRepository;
+        public TemplateCreatorController(ITemplateCreatorRepository TemplateCreatorRepository)
+        {
+            _TemplateCreatorRepository = TemplateCreatorRepository;
+        }
+        #region Template Creator
+        /// <summary>
+        /// Get All Templates for Grid.
+        /// UI Reffered - Template Creator
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAllTemplates()
+        {
+            var temp_cr = await _TemplateCreatorRepository.GetAllTemplates();
+            return Ok(temp_cr);
+        }
+
+        /// <summary>
+        /// Insert into Template Creator.
+        /// UI Reffered - Template Creator
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoTemplateCreator(DO_TemplateCreator obj)
+        {
+            var msg = await _TemplateCreatorRepository.InsertIntoTemplateCreator(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update Template Creator .
+        /// UI Reffered - Template Creator
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateTemplateCreator(DO_TemplateCreator obj)
+        {
+            var msg = await _TemplateCreatorRepository.UpdateTemplateCreator(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Active Or De Active Template Creator.
+        /// UI Reffered - Template Creator
+        /// </summary>
+        /// <param name="status-TemplateId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> ActiveOrDeActiveTemplateCreator(bool status, int TemplateId)
+        {
+            var msg = await _TemplateCreatorRepository.ActiveOrDeActiveTemplateCreator(status, TemplateId);
+            return Ok(msg);
+        }
+        #endregion Template Creator
+
+        #region Examination
+        /// <summary>
+        /// Get All Templates for Grid.
+        /// UI Reffered - Template Creator
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetExaminationsByTemplateId(int TemplateId)
+        {
+            var temp_cr = await _TemplateCreatorRepository.GetExaminationsByTemplateId(TemplateId);
+            return Ok(temp_cr);
+        }
+
+        /// <summary>
+        /// Insert into Template Creator.
+        /// UI Reffered - Template Creator
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoExamination(DO_Examination obj)
+        {
+            var msg = await _TemplateCreatorRepository.InsertIntoExamination(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update Template Creator .
+        /// UI Reffered - Template Creator
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateExamination(DO_Examination obj)
+        {
+            var msg = await _TemplateCreatorRepository.UpdateExamination(obj);
+            return Ok(msg);
+
+        }
+        #endregion Examination
+    }
+}

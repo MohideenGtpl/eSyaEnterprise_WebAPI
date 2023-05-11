@@ -1,0 +1,101 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CodeTypesController : ControllerBase
+    {
+        private readonly ICodeTypesRepository _CodeTypesRepository;
+        public CodeTypesController(ICodeTypesRepository CodeTypesRepository)
+        {
+            _CodeTypesRepository = CodeTypesRepository;
+        }
+        /// <summary>
+        /// Get Code Type.
+        /// UI Reffered - CodeType, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetCodeTypes()
+        {
+            var ct =await _CodeTypesRepository.GetCodeTypes();
+           return Ok(ct);
+        }
+
+        /// <summary>
+        /// Insert into Code Type Table
+        /// UI Reffered - CodeType,
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoCodeType(DO_CodeTypes obj)
+        {
+            var msg =await _CodeTypesRepository.InsertIntoCodeType(obj);
+            return Ok(msg);
+        }
+
+        /// <summary>
+        /// Update into Code Type Table
+        /// UI Reffered - CodeType,
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateCodeType(DO_CodeTypes obj)
+        {
+            var msg =await _CodeTypesRepository.UpdateCodeType(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Get Code Type List.
+        /// UI Reffered - Code Types dropdwon in Application Codes, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetActiveCodeTypes()
+        {
+            var act =await _CodeTypesRepository.GetActiveCodeTypes();
+           return Ok(act);
+        }
+        
+        /// <summary>
+        /// Get System Defined Code Type List.
+        /// UI Reffered - Application code, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetSystemDefinedCodeTypesList()
+        {
+            var uct = await _CodeTypesRepository.GetSystemDefinedCodeTypesList();
+            return Ok(uct);
+        }
+
+        /// <summary>
+        /// Get User Defined Code Type List.
+        /// UI Reffered - CodeType, 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetUserDefinedCodeTypesList()
+        {
+            var uct =await _CodeTypesRepository.GetUserDefinedCodeTypesList();
+           return Ok(uct);
+        }
+
+        /// <summary>
+        /// Active Or De Active Code Types.
+        /// UI Reffered - Code Types
+        /// </summary>
+        /// <param name="status-code_type"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> ActiveOrDeActiveCodeTypes(bool status, int code_type)
+        {
+            var ac = await _CodeTypesRepository.ActiveOrDeActiveCodeTypes(status, code_type);
+            return Ok(ac);
+        }
+    }
+}

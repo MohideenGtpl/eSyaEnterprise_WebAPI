@@ -1,0 +1,216 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class ApplicationCodesRepository : IApplicationCodesRepository
+    {
+        //public readonly eSyaEnterprise db;
+        //public ApplicationCodesRepository(eSyaEnterprise eSyaEnterprise)
+        //{
+        //    db = eSyaEnterprise;
+        //}
+        public async Task<List<DO_ApplicationCodes>> GetApplicationCodes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEaapcd
+                        .Select(r => new DO_ApplicationCodes
+                        {
+                            CodeType = r.CodeType,
+                            ApplicationCode = r.ApplicationCode,
+                            CodeDesc = r.CodeDesc,
+                            UsageStatus = r.UsageStatus,
+                            DefaultStatus = r.DefaultStatus,
+                            ActiveStatus = r.ActiveStatus,
+                            TerminalID = r.CodeTypeNavigation.CodeTyepDesc
+                        }).OrderBy(o => o.CodeDesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<DO_ApplicationCodes>> GetApplicationCodesByCodeType(int codeType)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEaapcd
+                        .Where(w => w.CodeType == codeType)
+                        .Select(r => new DO_ApplicationCodes
+                        {
+                            CodeType = r.CodeType,
+                            ApplicationCode = r.ApplicationCode,
+                            CodeDesc = r.CodeDesc,
+                            UsageStatus = r.UsageStatus,
+                            DefaultStatus = r.DefaultStatus,
+                            ActiveStatus = r.ActiveStatus,
+                        }).OrderBy(o => o.CodeDesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoApplicationCodes(DO_ApplicationCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_CodeDescExist = db.GtEaapcd.Where(w => w.CodeType == obj.CodeType
+                                && w.CodeDesc.ToUpper().Replace(" ", "") == obj.CodeDesc.ToUpper().Replace(" ", "")).Count();
+                        if (is_CodeDescExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Application Code is already Exists" };
+                        }
+
+                        var is_DefaultStatusTrue = db.GtEaapcd.Where(w => w.DefaultStatus && w.CodeType == obj.CodeType && w.ActiveStatus).Count();
+                        if (obj.DefaultStatus && is_DefaultStatusTrue > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Only one Application code can have Default Status true." };
+                        }
+
+                        GtCmapct ap_ct = db.GtCmapct.Where(w => w.CodeType == obj.CodeType).FirstOrDefault();
+                        ap_ct.UsageStatus = true;
+                        ap_ct.ModifiedBy = obj.UserID;
+                        ap_ct.ModifiedOn = System.DateTime.Now;
+                        ap_ct.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+
+                        int maxAppcode = db.GtEaapcd.Select(c => c.ApplicationCode).DefaultIfEmpty().Max();
+                        int AppCode = maxAppcode + 1;
+
+                        var ap_cd = new GtEaapcd
+                        {
+                            ApplicationCode = AppCode,
+                            CodeType = obj.CodeType,
+                            CodeDesc = obj.CodeDesc.Trim(),
+                            DefaultStatus = obj.DefaultStatus,
+                            ActiveStatus = obj.ActiveStatus,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal =obj.TerminalID,
+                          
+                        };
+                        db.GtEaapcd.Add(ap_cd);
+
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Application Code Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateApplicationCodes(DO_ApplicationCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtEaapcd ap_cd = db.GtEaapcd.Where(w => w.ApplicationCode == obj.ApplicationCode).FirstOrDefault();
+                        if (ap_cd == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Application Code is not exist." };
+                        }
+
+                        IEnumerable<GtEaapcd> ls_apct = db.GtEaapcd.Where(w => w.CodeType == obj.CodeType).ToList();
+                        
+                        var is_SameDescExists = ls_apct.Where(w => w.CodeDesc.ToUpper().Replace(" ", "") == obj.CodeDesc.ToUpper().Replace(" ", "")
+                                && w.ApplicationCode != obj.ApplicationCode).Count();
+                        if (is_SameDescExists > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Application Code is already Exists" };
+                        }
+
+                        var is_DefaultStatusAssign = ls_apct.Where(w => w.DefaultStatus && w.CodeType == obj.CodeType
+                                && w.ApplicationCode != obj.ApplicationCode && w.ActiveStatus).Count();
+                        if (obj.DefaultStatus && is_DefaultStatusAssign > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Only one Application code can have Default Status true." };
+                        }
+
+                        ap_cd.CodeDesc = obj.CodeDesc.Trim();
+                        ap_cd.DefaultStatus = obj.DefaultStatus;
+                        ap_cd.ActiveStatus = obj.ActiveStatus;
+                        ap_cd.ModifiedBy = obj.UserID;
+                        ap_cd.ModifiedOn = System.DateTime.Now;
+                        ap_cd.ModifiedTerminal = obj.TerminalID;
+
+                       await db.SaveChangesAsync();
+
+                        List<GtEaapcd> ls_apcd = db.GtEaapcd.Where(w => w.CodeType == obj.CodeType).ToList();
+                        bool isActive = false;
+                        foreach (var f_apct in ls_apcd)
+                        {
+                            if (f_apct.ActiveStatus == true)
+                            {
+                                GtCmapct obj_CodeType = db.GtCmapct.Where(w => w.CodeType == obj.CodeType).FirstOrDefault();
+                                obj_CodeType.UsageStatus = true;
+
+                               await db.SaveChangesAsync();
+                                isActive = true;
+                                break;
+                            }
+                        }
+
+                        if (!isActive)
+                        {
+                            GtCmapct obj_CodeType = db.GtCmapct.FirstOrDefault(x => x.CodeType == obj.CodeType);
+                            obj_CodeType.UsageStatus = obj.ActiveStatus;
+
+                            await db.SaveChangesAsync();
+                        }
+
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Application Code Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+    }
+}

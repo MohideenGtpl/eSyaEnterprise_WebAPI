@@ -1,0 +1,448 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class CurrencyMasterRepository:ICurrencyMasterRepository
+    {
+        #region Currency Master
+
+        public List<DO_CurrencyMaster> GetCurrencyMaster()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmcums
+                        .Select(r => new DO_CurrencyMaster
+                        {
+                            CurrencyCode = r.CurrencyCode,
+                            CurrencyName = r.CurrencyName,
+                            Symbol = r.Symbol,
+                            DecimalPlaces = r.DecimalPlaces,
+                            ShowInMillions = r.ShowInMillions,
+                            SymbolSuffixToAmount = r.SymbolSuffixToAmount,
+                            DecimalPortionWord = r.DecimalPortionWord,
+                            ActiveStatus = r.ActiveStatus
+                            
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<DO_CurrencyMaster> GetActiveCurrencyList()
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmcums.Where(w => w.ActiveStatus)
+                        .Select(c => new DO_CurrencyMaster
+                        {
+                            CurrencyCode = c.CurrencyCode,
+                            CurrencyName = c.CurrencyName
+
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<DO_CurrencyMaster> GetCurrencyListByCurrenyPrefix(string currencyPrefix)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmcums.Where(w => w.ActiveStatus && w.CurrencyName.Trim().ToLower().StartsWith(currencyPrefix.Trim().ToLower()))
+                        .Select(r => new DO_CurrencyMaster
+                        {
+                            CurrencyCode = r.CurrencyCode,
+                            CurrencyName = r.CurrencyName
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertIntoCurrencyMaster(DO_CurrencyMaster obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_CurrencyCodeExist = db.GtCmcums.Where(w => w.CurrencyCode == obj.CurrencyCode).Count();
+                        if (is_CurrencyCodeExist > 0)
+                        {
+                            return new DO_ReturnParameter { Status = false, Message = "Currency Code is already exist." };
+                        }
+
+                        var is_CurrencyNameExist = db.GtCmcums.Where(w => w.CurrencyName.Trim().ToUpper() == obj.CurrencyName.Trim().ToUpper()).Count();
+                        if (is_CurrencyNameExist > 0)
+                        {
+                            return new DO_ReturnParameter { Status = false, Message = "Currency Name is already exist." };
+                        }
+
+                        var is_SymbolExist = db.GtCmcums.Where(w => w.Symbol.Trim().ToUpper() == obj.Symbol.Trim().ToUpper()).Count();
+                        if (is_SymbolExist > 0)
+                        {
+                            return new DO_ReturnParameter { Status = false, Message = "Currency Symbol is already exist." };
+                        }
+
+                        var cu_ms = new GtCmcums()
+                        {
+                            CurrencyCode = obj.CurrencyCode,
+                            CurrencyName = obj.CurrencyName,
+                            Symbol = obj.Symbol,
+                            DecimalPlaces = obj.DecimalPlaces,
+                            ShowInMillions = obj.ShowInMillions,
+                            SymbolSuffixToAmount = obj.SymbolSuffixToAmount,
+                            DecimalPortionWord = obj.DecimalPortionWord,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId=obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+                        };
+                        db.GtCmcums.Add(cu_ms);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Currency Created Successfully" };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateCurrencyMaster(DO_CurrencyMaster obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_CurrencyNameExist = db.GtCmcums.Where(w => w.CurrencyName.Trim().ToUpper() == obj.CurrencyName.Trim().ToUpper() && w.CurrencyCode != obj.CurrencyCode).Count();
+                        if (is_CurrencyNameExist > 0)
+                        {
+                            return new DO_ReturnParameter { Status = false, Message = "Currency Name is already used by another currency code." };
+                        }
+
+                        var is_SymbolExist = db.GtCmcums.Where(w => w.Symbol.Trim().ToUpper() == obj.Symbol.Trim().ToUpper() && w.CurrencyCode != obj.CurrencyCode).Count();
+                        if (is_SymbolExist > 0)
+                        {
+                            return new DO_ReturnParameter { Status = false, Message = "Currency Symbol is already used by another currency code." };
+                        }
+
+                        GtCmcums cu_ms = db.GtCmcums.Where(w => w.CurrencyCode == obj.CurrencyCode).FirstOrDefault();
+                        if (cu_ms == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Currency Code is not exist" };
+                        }
+
+                        cu_ms.CurrencyName = obj.CurrencyName;
+                        cu_ms.Symbol = obj.Symbol;
+                        cu_ms.DecimalPlaces = obj.DecimalPlaces;
+                        cu_ms.ShowInMillions = obj.ShowInMillions;
+                        cu_ms.SymbolSuffixToAmount = obj.SymbolSuffixToAmount;
+                        cu_ms.DecimalPortionWord = obj.DecimalPortionWord;
+                        cu_ms.ActiveStatus = obj.ActiveStatus;
+                        cu_ms.FormId = obj.FormId;
+                        cu_ms.ModifiedBy = obj.UserID;
+                        cu_ms.ModifiedOn = System.DateTime.Now;
+                        cu_ms.ModifiedTerminal = obj.TerminalID;
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Currency Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter DeleteCurrencyMasterByCurrencyCode(string currencyCode)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtCmcums cu_ms = db.GtCmcums.Where(w => w.CurrencyCode == currencyCode).FirstOrDefault();
+                        if (cu_ms == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Currency Name is not exist" };
+                        }
+
+                        db.GtCmcums.Remove(cu_ms);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Deleted Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Currency Denomination Information
+
+        public List<DO_CurrencyDenominationInformation> GetCurrencyDenominationInfoByCurrencyCode(string currencyCode)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmcudi
+                         .Where(w => w.CurrencyCode.Trim().ToLower() == currencyCode.Trim().ToLower())
+                         .Select(r => new DO_CurrencyDenominationInformation
+                         {
+                             CurrencyCode = r.CurrencyCode,
+                             Denomination = r.Denomination,
+                             Sequence = r.Sequence,
+                             EffectiveDate = r.EffectiveDate,
+                             ActiveStatus = r.ActiveStatus
+                            
+                         }).OrderBy(o => o.Sequence).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertOrUpdateCurrencyDenominationInformation(DO_CurrencyDenominationInformation obj)
+        {
+            bool result;
+
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_DenominationExist = db.GtCmcudi.Any(a => a.CurrencyCode == obj.CurrencyCode && a.Denomination == obj.Denomination);
+
+                        if (is_DenominationExist)
+                        {
+                            result = UpdateCurrencyDenominationInformation(obj);
+                            if (!result)
+                            {
+                                return new DO_ReturnParameter() { Status = true, Message = "Could't Find Currency Denomination Information." };
+                            }
+
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Updated Successfully." };
+                        }
+                        else
+                        {
+                            List<GtCmcudi> ls_DenominationInfoExist = db.GtCmcudi.Where(c => c.CurrencyCode == obj.CurrencyCode).ToList();
+                            foreach (var dn in ls_DenominationInfoExist)
+                            {
+                                if (dn.Sequence == obj.Sequence)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Currency Denomination Sequence already exits." };
+                                }
+                                if (dn.Denomination == obj.Denomination)
+                                {
+                                    return new DO_ReturnParameter() { Status = false, Message = "Currency Denomination already exits." };
+                                }
+                            }
+
+                            result = InsertCurrencyDenominationInformation(obj);
+                            if (!result)
+                            {
+                                return new DO_ReturnParameter() { Status = true, Message = "Currency Denomination Information is already exist." };
+                            }
+
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, Message = "Currency Denomination Created Successfully." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public bool InsertCurrencyDenominationInformation(DO_CurrencyDenominationInformation obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                try
+                {
+                    bool is_DenominationExist = db.GtCmcudi.Any(c => c.Denomination == obj.Denomination && c.CurrencyCode == obj.CurrencyCode);
+                    if (is_DenominationExist)
+                    {
+                        return false;
+                    }
+
+                    var cu_di = new GtCmcudi()
+                    {
+                        CurrencyCode = obj.CurrencyCode,
+                        Sequence = obj.Sequence,
+                        Denomination = obj.Denomination,
+                        EffectiveDate = obj.EffectiveDate,
+                        ActiveStatus = obj.ActiveStatus,
+                        FormId=obj.FormId,
+                        CreatedBy = obj.UserID,
+                        CreatedOn = System.DateTime.Now,
+                        CreatedTerminal = obj.TerminalID
+                    };
+                    db.GtCmcudi.Add(cu_di);
+
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public bool UpdateCurrencyDenominationInformation(DO_CurrencyDenominationInformation obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                try
+                {
+                    GtCmcudi cu_di = db.GtCmcudi.Where(w => w.CurrencyCode == obj.CurrencyCode && w.Denomination == obj.Denomination).FirstOrDefault();
+                    if (cu_di == null)
+                    {
+                        return false;
+                    }
+
+                    cu_di.Sequence = obj.Sequence;
+                    cu_di.Denomination = obj.Denomination;
+                    cu_di.EffectiveDate = obj.EffectiveDate;
+                    cu_di.ActiveStatus = obj.ActiveStatus;
+                    cu_di.FormId = obj.FormId;
+                    cu_di.ModifiedBy = obj.UserID;
+                    cu_di.ModifiedOn = System.DateTime.Now;
+                    cu_di.ModifiedTerminal = obj.TerminalID;
+
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public DO_ReturnParameter DeleteCurrencyDenominationInformation(string currencyCode, decimal denomination)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtCmcudi cu_di = db.GtCmcudi.Where(w => w.CurrencyCode == currencyCode && w.Denomination == denomination).FirstOrDefault();
+
+                        if (cu_di == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Couldn't find Currency Denomination Information." };
+                        }
+
+                        db.GtCmcudi.Remove(cu_di);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Currency Denomination Deleted Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
+}

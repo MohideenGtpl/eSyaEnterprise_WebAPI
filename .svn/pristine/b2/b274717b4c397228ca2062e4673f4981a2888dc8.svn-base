@@ -1,0 +1,119 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CurrencyMasterController : ControllerBase
+    {
+        private readonly ICurrencyMasterRepository _CurrencyMasterRepository;
+        public CurrencyMasterController(ICurrencyMasterRepository CurrencyMasterRepository)
+        {
+            _CurrencyMasterRepository = CurrencyMasterRepository;
+        }
+        /// <summary>
+        /// Get Currency Master.
+        /// UI Reffered - Currency Master
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetCurrencyMaster()
+        {
+            var currencies = _CurrencyMasterRepository.GetCurrencyMaster();
+            return Ok(currencies);
+        }
+
+        /// <summary>
+        /// Get Currency List search by Currency Prefix.
+        /// UI Reffered - Currency Master
+        /// </summary>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetCurrencyListByCurrenyPrefix(string prefix)
+        {
+            var currencies = _CurrencyMasterRepository.GetCurrencyListByCurrenyPrefix(prefix);
+            return Ok(currencies);
+        }
+
+        /// <summary>
+        /// Insert into Currency Master Table
+        /// UI Reffered - Currency Master
+        /// </summary>
+        [HttpPost]
+        public IActionResult InsertIntoCurrencyMaster(DO_CurrencyMaster obj)
+        {
+            var msg = _CurrencyMasterRepository.InsertIntoCurrencyMaster(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Update Currency Master Table
+        /// UI Reffered - Currency Master
+        /// </summary>
+        [HttpPost]
+        public IActionResult UpdateCurrencyMaster(DO_CurrencyMaster obj)
+        {
+            var msg = _CurrencyMasterRepository.UpdateCurrencyMaster(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Delete Currency Master Table
+        /// UI Reffered - Currency Master
+        /// <param name="prefix"></param>
+        /// </summary>
+        public IActionResult DeleteCurrencyMasterByCurrencyCode(string currencyCode)
+        {
+            var msg = _CurrencyMasterRepository.DeleteCurrencyMasterByCurrencyCode(currencyCode);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Get Currency Denomination Information by Currency Code.
+        /// UI Reffered - Currency Master
+        /// </summary>
+        /// <param name="currencyCode"></param>
+        /// <returns></returns>
+        public IActionResult GetCurrencyDenominationInfoByCurrencyCode(string currencyCode)
+        {
+            var curr_denominations = _CurrencyMasterRepository.GetCurrencyDenominationInfoByCurrencyCode(currencyCode);
+            return Ok(curr_denominations);
+        }
+
+        /// <summary>
+        /// Insert / Update into Currency information Table
+        /// UI Reffered - Currency Master
+        /// </summary>
+        public IActionResult InsertOrUpdateCurrencyDenominationInformation(DO_CurrencyDenominationInformation obj)
+        {
+            var msg = _CurrencyMasterRepository.InsertOrUpdateCurrencyDenominationInformation(obj);
+            return Ok (msg);
+        }
+
+        /// <summary>
+        /// Delete Currency information by Currency code and Denomination
+        /// UI Reffered - Currency Master
+        /// </summary>
+        [HttpDelete]
+        public IActionResult DeleteCurrencyDenominationInformation(string currencyCode, decimal denomination)
+        {
+            var msg = _CurrencyMasterRepository.DeleteCurrencyDenominationInformation(currencyCode, denomination);
+           return Ok (msg);
+        }
+
+        /// <summary>
+        /// Get Currency List.
+        /// UI Reffered - Country Master
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetActiveCurrencyList()
+        {
+            var currencies = _CurrencyMasterRepository.GetActiveCurrencyList();
+            return Ok(currencies);
+        }
+    }
+}

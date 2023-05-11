@@ -1,0 +1,89 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaConfigSetup.IF
+{
+    public interface IBusinessStructureRepository
+    {
+        #region Business Entity
+
+        Task<List<DO_BusinessEntity>> GetBusinessEntities();
+
+        Task<DO_BusinessEntity> GetBusinessEntityInfo(int BusinessId);
+
+        Task<DO_ReturnParameter> InsertBusinessEntity(DO_BusinessEntity businessentity);
+
+        Task<DO_ReturnParameter> UpdateBusinessEntity(DO_BusinessEntity businessentity);
+
+        Task<DO_ReturnParameter> DeleteBusinessEntity(int BusinessEntityId);
+
+        Task<List<DO_BusinessEntity>> GetActiveBusinessEntities();
+
+        #endregion  Business Entity
+
+        #region  Business Segment
+
+        Task<List<DO_BusinessSegment>> GetBusinessSegmentByBusinessId(int BusinessId);
+
+        Task<DO_BusinessConfiguration> GetBusinessSegment();
+
+        Task<DO_BusinessSegment> GetBusinessSegmentInfo(int BusinessId, int SegmentId);
+
+        Task<DO_ReturnParameter> InsertBusinessSegment(DO_BusinessSegment BusinessSegment);
+
+        Task<DO_ReturnParameter> UpdateBusinessSegment(DO_BusinessSegment BusinessSegment);
+
+        Task<DO_ReturnParameter> DeleteBusinessSegment(int BusinessId, int SegmentId);
+
+        Task<List<DO_BusienssSegmentCurrency>> GetBSCurrency(int BusinessId, int SegmentId);
+
+        Task<List<DO_BusinessSegment>> GetActiveBusinessSegmentbyBusinessId(int BusinessId);
+
+        #endregion Business Segment
+
+        #region Business Location
+
+        Task<List<DO_BusinessLocation>> GetBusinessLocationByBusinessIdandSegmentId(int BusinessId, int SegmentId);
+
+        Task<DO_BusinessConfiguration> GetBusinessLocations();
+
+        Task<DO_BusinessLocation> GetBusinessLocationInfo(int BusinessId, int SegmentId, int LocationId);
+
+        Task<DO_ReturnParameter> InsertBusinessLocation(DO_BusinessLocation location);
+
+        Task<DO_ReturnParameter> UpdateBusinessLocation(DO_BusinessLocation location);
+
+        Task<DO_ReturnParameter> DeleteBusinessLocation(int BusinessId, int SegmentId, int LocationId);
+
+        Task<List<DO_BusinessLocation>> GetBusinessKey();
+
+        #endregion Business Location
+
+        #region Business Stores
+
+        //Task <DO_ReturnParameter> InsertOrUpdateBusinessStores(DO_BusinessStores store);
+
+        //Task <List<DO_BusinessStores>> GetBusinessStores(int Businesskey);
+
+        #endregion Business Stores
+
+        #region Business Statutory Details
+
+        //Task <DO_ReturnParameter> InsertOrUpdateBusinessStatutoryDetails(DO_BusinessStatutoryDetails statutorydetails);
+
+        //Task <List<DO_BusinessStatutoryDetails>> GetBusinessStatutoryDetails(int BusinessKey);
+
+        #endregion Business Statutory Details
+
+        #region Business Subscription
+
+        Task<List<DO_BusinessSubscription>> GetBusinessSubscription(int BusinessKey);
+       
+        Task<DO_ReturnParameter> InsertOrUpdateBusinessSubscription(DO_BusinessSubscription businesssubs);
+
+        #endregion  Business Subscription
+    }
+}

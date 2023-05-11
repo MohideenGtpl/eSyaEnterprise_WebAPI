@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaConfigSetup.DL.Repository
+{
+   public class ReportHeaderRepository:IReportHeaderRepository
+    {
+      
+        public List<DO_ReportHeader> GetReportHeaderList(int BusinessKey)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    var result = db.GtCmgrhd.Where(x=>x.BusinessKey==BusinessKey)
+                                  
+                                  .Select(g => new DO_ReportHeader
+                                  {
+
+                                      BusinessKey = g.BusinessKey,
+                                      ReportHeader = g.ReportHeader,
+                                      ReportHeaderDesc = g.ReportHeaderDesc,
+                                      ReportHeaderTemplate = g.ReportHeaderTemplate,
+                                      HeaderHeight = g.HeaderHeight,
+                                      IsHeaderInvisible = g.IsHeaderInvisible,
+                                      ActiveStatus = g.ActiveStatus
+                                  }).OrderBy(o => o.ReportHeader).ToList();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertOrUpdateReportHeader(DO_ReportHeader rpHeader)
+        {
+            try
+            {
+                if (rpHeader.ReportHeader != 0)
+                {
+                    return UpdateReportHeader(rpHeader);
+                }
+                else
+                {
+                    return InsertReportHeader(rpHeader);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DO_ReturnParameter InsertReportHeader(DO_ReportHeader rpHeader)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        bool is_ReportHeaderDescExist = db.GtCmgrhd.Any(a => a.ReportHeaderDesc.Trim().ToUpper() == rpHeader.ReportHeaderDesc.Trim().ToUpper()&&a.BusinessKey==rpHeader.BusinessKey);
+                        if (is_ReportHeaderDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Report Header Desc is already exist." };
+                        }
+                        int maxval = db.GtCmgrhd.Where(x => x.BusinessKey == rpHeader.BusinessKey).Select(c => c.ReportHeader).DefaultIfEmpty().Max();
+                        int _reportHeader = maxval + 1;
+                        var report_Header = new GtCmgrhd
+                        {
+                            BusinessKey = rpHeader.BusinessKey,
+                            ReportHeader = _reportHeader,
+                            ReportHeaderDesc = rpHeader.ReportHeaderDesc,
+                            ReportHeaderTemplate = rpHeader.ReportHeaderTemplate,
+                            HeaderHeight = rpHeader.HeaderHeight,
+                            IsHeaderInvisible = rpHeader.IsHeaderInvisible,
+                            ActiveStatus = rpHeader.ActiveStatus,
+                            CreatedBy = rpHeader.UserID,
+                            CreatedOn = DateTime.Now,
+                            CreatedTerminal = rpHeader.TerminalID
+
+                        };
+                        db.GtCmgrhd.Add(report_Header);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Report Header Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateReportHeader(DO_ReportHeader rpHeader)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var is_ReportHeaderDescExist = db.GtCmgrhd.Where(w => w.ReportHeaderDesc.Trim().ToUpper().Replace(" ", "") == rpHeader.ReportHeaderDesc.Trim().ToUpper().Replace(" ", "")
+                                && w.ReportHeader != rpHeader.ReportHeader && w.BusinessKey == rpHeader.BusinessKey).FirstOrDefault();
+                        if (is_ReportHeaderDescExist != null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Report Header Desc is already exist." };
+                        }
+
+                        GtCmgrhd rp_header = db.GtCmgrhd.Where(w => w.ReportHeader == rpHeader.ReportHeader && w.BusinessKey == rpHeader.BusinessKey).FirstOrDefault();
+                        if (rp_header == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Report Header is not exist" };
+                        }
+
+                        rp_header.ReportHeaderDesc = rpHeader.ReportHeaderDesc;
+                        rp_header.ReportHeaderTemplate = rpHeader.ReportHeaderTemplate;
+                        rp_header.HeaderHeight = rpHeader.HeaderHeight;
+                        rp_header.IsHeaderInvisible = rpHeader.IsHeaderInvisible;
+                        rp_header.ActiveStatus = rpHeader.ActiveStatus;
+                        rp_header.ModifiedBy = rpHeader.UserID;
+                        rp_header.ModifiedOn = DateTime.Now;
+                        rp_header.ModifiedTerminal = rpHeader.TerminalID;
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Report Header Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+    }
+}

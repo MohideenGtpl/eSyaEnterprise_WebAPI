@@ -1,0 +1,40 @@
+﻿using eSyaConfigSetup.DL.Repository;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace eSyaEnterprise_WebAPI.Areas.ConfigSetup.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class UnitofMeasureController : ControllerBase
+    {
+        private readonly IUnitofMeasureRepository _UnitofMeasureRepository;
+        public UnitofMeasureController(IUnitofMeasureRepository UnitofMeasureRepository)
+        {
+            _UnitofMeasureRepository = UnitofMeasureRepository;
+        }
+        /// <summary>
+        /// Getting  Unit of Measure List.
+        /// UI Reffered - Unit of Measure Grid
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetUnitofMeasurements()
+        {
+            var unit_measures =await _UnitofMeasureRepository.GetUnitofMeasurements();
+            return Ok(unit_measures);
+        }
+        /// <summary>
+        /// Insert Or Update Unit of Measure .
+        /// UI Reffered -Unit of Measure
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateUnitofMeasurement(DO_UnitofMeasure uoms)
+        {
+            var msg = await _UnitofMeasureRepository.InsertOrUpdateUnitofMeasurement(uoms);
+            return Ok(msg);
+
+        }
+    }
+}

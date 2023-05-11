@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class TaxRuleRepository:ITaxRuleRepository
+    {
+        public List<DO_TaxRule> GetTaxRuleByISDandTaxCode(int ISDCode, int TaxCode)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmtxdt
+                        .Where(w => w.Isdcode == ISDCode && w.TaxCode == TaxCode)
+                        .Select(r => new DO_TaxRule
+                        {
+                            ISDCode = r.Isdcode,
+                            TaxCode = r.TaxCode,
+                            SerialNumber = r.SerialNumber,
+                            TaxShortCode = r.TaxShortCode,
+                            TaxDescription = r.TaxDescription,
+                            SlabOrPerc = (r.SlabOrPerc == "P" ? "Percentage" : "Slab"),
+                            IsSplitApplicable = r.IsSplitApplicable,
+                            SplitCategoryPerc = (decimal)r.SplitCategoryPerc,
+                            ActiveStatus = r.ActiveStatus
+                        }).OrderBy(o => o.TaxDescription).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertIntoTaxRule(DO_TaxRule obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var _isTaxShortCodeExist = db.GtCmtxdt.Where(w => w.Isdcode == obj.ISDCode && w.TaxCode == obj.TaxCode && w.TaxShortCode == obj.TaxShortCode && w.SplitCategoryPerc == obj.SplitCategoryPerc).Count();
+                        if (_isTaxShortCodeExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Tax Short Code is already Exists For Selected Tax Code" };
+                        }
+
+                        var _isTaxDescriptionExist = db.GtCmtxdt.Where(w => w.Isdcode == obj.ISDCode && w.TaxCode == obj.TaxCode && w.TaxDescription == obj.TaxDescription && w.SplitCategoryPerc == obj.SplitCategoryPerc).Count();
+                        if (_isTaxDescriptionExist > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Tax Description is already Exists For Selected Tax Code" };
+                        }
+
+
+                        int _maxSerialNumber = db.GtCmtxdt.Select(c => c.SerialNumber).DefaultIfEmpty().Max();
+                        _maxSerialNumber = _maxSerialNumber + 1;
+                        
+
+                        var ap_cd = new GtCmtxdt
+                        {
+                            Isdcode = obj.ISDCode,
+                            TaxCode = obj.TaxCode,
+                            SerialNumber = _maxSerialNumber,
+                            TaxShortCode = obj.TaxShortCode.Trim(),
+                            TaxDescription = obj.TaxDescription.Trim(),
+                            SlabOrPerc = obj.SlabOrPerc.Substring(0, 1),
+                            IsSplitApplicable = obj.IsSplitApplicable,
+                            SplitCategoryPerc = obj.SplitCategoryPerc,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID,
+
+                        };
+                        db.GtCmtxdt.Add(ap_cd);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Tax Rule Created Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateTaxRule(DO_TaxRule obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        GtCmtxdt ap_cd = db.GtCmtxdt.Where(w => w.Isdcode == obj.ISDCode && w.TaxCode == obj.TaxCode && w.SerialNumber == obj.SerialNumber).FirstOrDefault();
+                        if (ap_cd == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Tax Rule is not exist For Selected Tax Code." };
+                        }
+
+                        IEnumerable<GtCmtxdt> ls_apct = db.GtCmtxdt.Where(w => w.Isdcode == obj.ISDCode && w.TaxCode == obj.TaxCode).ToList();
+
+                        var is_SameDescExists = ls_apct.Where(w => w.TaxDescription.ToUpper().Replace(" ", "") == obj.TaxDescription.ToUpper().Replace(" ", "")
+                                && w.TaxCode != obj.TaxCode).Count();
+                        if (is_SameDescExists > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Tax Description is already Exists" };
+                        }
+
+                        var is_SameShortCodeExists = ls_apct.Where(w => w.TaxShortCode.ToUpper().Replace(" ", "") == obj.TaxShortCode.ToUpper().Replace(" ", "")
+                                && w.TaxCode != obj.TaxCode).Count();
+                        if (is_SameShortCodeExists > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Tax short Code is already Exists" };
+                        }
+
+                        ap_cd.TaxShortCode = obj.TaxShortCode.Trim();
+                        ap_cd.TaxDescription = obj.TaxDescription.Trim();
+                        ap_cd.SlabOrPerc = obj.SlabOrPerc.Substring(0, 1);
+                        ap_cd.IsSplitApplicable = obj.IsSplitApplicable;
+                        ap_cd.SplitCategoryPerc = obj.SplitCategoryPerc;
+                        ap_cd.ActiveStatus = obj.ActiveStatus;
+                        ap_cd.ModifiedBy = obj.UserID;
+                        ap_cd.ModifiedOn = System.DateTime.Now;
+                        ap_cd.ModifiedTerminal = obj.TerminalID;
+
+                        db.SaveChanges();
+
+                        dbContext.Commit();
+                        return new DO_ReturnParameter() { Status = true, Message = "Tax Rule Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+    }
+}

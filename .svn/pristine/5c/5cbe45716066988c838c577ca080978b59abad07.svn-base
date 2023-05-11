@@ -1,0 +1,180 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using eSyaConfigSetup.DL.DataLayer;
+using eSyaConfigSetup.DL.Entities;
+using eSyaConfigSetup.DO;
+using eSyaConfigSetup.IF;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaConfigSetup.DL.Repository
+{
+    public class CodeTypesRepository:ICodeTypesRepository
+    {
+        public List<DO_CodeTypes> GetCodeTypes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmapct
+                        .Select(r => new DO_CodeTypes
+                        {
+                            CodeType = r.CodeType,
+                            CodeTypeDesc = r.CodeTyepDesc,
+                            UsageStatus = r.UsageStatus,
+                            CodeTypeControl = r.CodeTypeControl,
+                            ActiveStatus = r.ActiveStatus
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DO_ReturnParameter InsertIntoCodeType(DO_CodeTypes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_CodeTypeExist = db.GtCmapct.Any(a => a.CodeTyepDesc.ToUpper().Replace(" ", "") == obj.CodeTypeDesc.ToUpper().Replace(" ", ""));
+                        if (is_CodeTypeExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Code Type is already Exists" };
+                        }
+
+                        int maxCodeTypeValue = db.GtCmapct.Select(c => c.CodeType).DefaultIfEmpty().Max();
+                        int codeType = maxCodeTypeValue + 1;
+
+                        var ap_ct = new GtCmapct
+                        {
+                            CodeType = codeType,
+                            CodeTyepDesc = obj.CodeTypeDesc.ToUpper().Trim(),
+                            CodeTypeControl = obj.CodeTypeControl,
+                            UsageStatus = obj.UsageStatus,
+                            ActiveStatus = obj.ActiveStatus,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+                        };
+                        db.GtCmapct.Add(ap_ct);
+
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "Code Type Created Successfully" };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public DO_ReturnParameter UpdateCodeType(DO_CodeTypes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_CodeTypeDescExist = db.GtCmapct.Any(a => a.CodeType != obj.CodeType && a.CodeTyepDesc.ToUpper().Trim().Replace(" ", "") == obj.CodeTypeDesc.ToUpper().Trim().Replace(" ", ""));
+                        if (is_CodeTypeDescExist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Code Type is already Exists" };
+                        }
+
+                        GtCmapct ap_ct = db.GtCmapct.Where(w => w.CodeType == obj.CodeType).FirstOrDefault();
+                        if (ap_ct == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Code Type is not exist" };
+                        }
+
+                        ap_ct.CodeTyepDesc = obj.CodeTypeDesc.ToUpper().Trim();
+                        ap_ct.CodeTypeControl = obj.CodeTypeControl;
+                        ap_ct.ActiveStatus = obj.ActiveStatus;
+                        ap_ct.ModifiedBy = obj.UserID;
+                        ap_ct.ModifiedOn = System.DateTime.Now;
+                        ap_ct.ModifiedTerminal = obj.TerminalID;
+                        db.SaveChanges();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = " Code Type Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public List<DO_CodeTypes> GetActiveCodeTypes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmapct
+                        .Where(w => w.ActiveStatus)
+                        .Select(r => new DO_CodeTypes
+                        {
+                            CodeType = r.CodeType,
+                            CodeTypeDesc = r.CodeTyepDesc
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<DO_CodeTypes> GetUserDefinedCodeTypesList()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtCmapct
+                        .Where(w => w.ActiveStatus && w.CodeTypeControl == "U")
+                        .Select(r => new DO_CodeTypes
+                        {
+                            CodeType = r.CodeType,
+                            CodeTypeDesc = r.CodeTyepDesc
+                        }).ToList();
+
+                    return ds.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

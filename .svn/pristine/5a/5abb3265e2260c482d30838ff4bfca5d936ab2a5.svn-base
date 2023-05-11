@@ -1,0 +1,20 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface ICodeTypesRepository
+    {
+        List<DO_CodeTypes> GetCodeTypes();
+
+        DO_ReturnParameter InsertIntoCodeType(DO_CodeTypes obj);
+
+        DO_ReturnParameter UpdateCodeType(DO_CodeTypes obj);
+
+        List<DO_CodeTypes> GetActiveCodeTypes();
+
+        List<DO_CodeTypes> GetUserDefinedCodeTypesList();
+    }
+}

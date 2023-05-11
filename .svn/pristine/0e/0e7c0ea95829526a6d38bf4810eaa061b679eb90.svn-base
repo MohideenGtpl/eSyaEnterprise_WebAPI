@@ -1,0 +1,18 @@
+﻿using eSyaConfigSetup.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaConfigSetup.IF
+{
+   public interface IStoreMasterRepository
+    {
+        List<DO_StoreMaster> GetStoreCodes();
+
+        DO_ReturnParameter InsertOrUpdateStoreCodes(DO_StoreMaster storecodes);
+
+        DO_ReturnParameter DeleteStoreCode(int Storecode);
+
+        List<DO_StoreMaster> GetActiveStoreCodes();
+    }
+}
